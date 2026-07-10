@@ -131,36 +131,71 @@ function androidNotify(){
     }
 }
 
-// ===== ADD TO HISTORY =====
+// ===== FIXED: ADD TO HISTORY - Always works =====
 function addToHistory(gameName, coinsEarned, won) {
     try {
-        // Check if history page function exists
-        if (window.addGameEntry && typeof window.addGameEntry === 'function') {
+        // Method 1: Try to use the global function if it exists (from history page)
+        if (typeof window.addGameEntry === 'function') {
             window.addGameEntry(gameName, coinsEarned, won);
             console.log('✅ History entry added via window.addGameEntry');
             return;
         }
         
-        // Fallback: Direct localStorage
+        // Method 2: Direct localStorage (Always works!)
         let history = [];
         try {
-            history = JSON.parse(localStorage.getItem('gameHistory')) || [];
-        } catch(e) {}
+            const stored = localStorage.getItem('gameHistory');
+            if (stored) {
+                history = JSON.parse(stored);
+            }
+        } catch(e) {
+            console.warn('Error reading history, starting fresh');
+            history = [];
+        }
         
-        history.push({
+        // Make sure history is an array
+        if (!Array.isArray(history)) {
+            history = [];
+        }
+        
+        // Add new entry
+        const entry = {
             game: gameName,
             coins: coinsEarned,
             won: won,
             date: new Date().toISOString()
-        });
+        };
+        history.push(entry);
         
-        // Keep last 50 entries
-        if (history.length > 50) history.shift();
+        // Keep last 100 entries
+        if (history.length > 100) {
+            history = history.slice(-100);
+        }
+        
+        // Save back to localStorage
         localStorage.setItem('gameHistory', JSON.stringify(history));
-        console.log('✅ History entry added directly:', gameName, coinsEarned, won);
+        console.log('✅ History entry added directly:', entry);
+        
+        // Also try to sync if there's a sync function
+        if (typeof window.syncHistory === 'function') {
+            window.syncHistory();
+        }
         
     } catch(e) {
         console.error('❌ Error adding history:', e);
+        // Try one more time with a clean slate
+        try {
+            const fallbackEntry = [{
+                game: gameName,
+                coins: coinsEarned,
+                won: won,
+                date: new Date().toISOString()
+            }];
+            localStorage.setItem('gameHistory', JSON.stringify(fallbackEntry));
+            console.log('✅ History saved with fallback method');
+        } catch(e2) {
+            console.error('❌ Even fallback failed:', e2);
+        }
     }
 }
 
@@ -229,8 +264,8 @@ function finish(){
     rewardBox.innerHTML=`<i class="bi bi-coin"></i> +${reward}`;
     resultSub.textContent=`You got ${score}/5 correct ${passed?'🎊':'Better luck next time!'}`;
     
+    // Add coins if passed
     if(passed){
-        // Add coins
         coins+=10;
         localStorage.setItem('MySalary', coins);
         updateCoins();
@@ -259,9 +294,11 @@ function resetQuiz(){
 updateCoins();
 render();
 
+// Log for debugging
 console.log('📂 Find the File Quiz loaded!');
-console.log('💡 History will be added automatically on finish');
+console.log('📊 Current history:', localStorage.getItem('gameHistory'));
+console.log('💡 History will be saved automatically on finish');
 </script>
+
 </body>
 </html>
-
