@@ -13,33 +13,6 @@
 
 <style>
 
-/* Header */
-
-.header{
-    background:#fff;
-    padding:18px 16px;
-    display:flex;
-    align-items:center;
-    gap:15px;
-    border-bottom:1px solid #eee;
-}
-
-.back-btn{
-    width:52px;
-    height:52px;
-    border:none;
-    border-radius:14px;
-    background:#6C5CE7;
-    color:#fff;
-    font-size:22px;
-}
-
-.page-title{
-    font-size:28px;
-    font-weight:600;
-    color:#222;
-}
-
 /* Balance Card */
 
 .balance-card{
@@ -133,19 +106,16 @@
 </style>
 </head>
 <body>
+    
+<!-- HEADER -->
+<header>
+  <button class="back-btn" role="button" aria-label="Go back" onclick="window.history.back();">
+    <i class="bi bi-arrow-left"></i>
+  </button>
+  <div class="title"> Rewards </div>
+</header>
 
-<!-- Header -->
-
-<div class="header">
-
-    <button class="back-btn" onclick="history.back()">
-        <i class="bi bi-arrow-left"></i>
-    </button>
-
-    <div class="page-title">Rewards</div>
-
-</div>
-
+    
 <!-- Balance -->
 
 <div class="balance-card">
