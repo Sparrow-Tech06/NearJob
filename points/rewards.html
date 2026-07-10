@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<title>Rewards</title>
+
+<style>
+
+body{
+    background:#fafafa;
+    font-family:Arial,sans-serif;
+}
+
+.header{
+    padding:18px 16px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    background:#fff;
+}
+
+.backBtn{
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    border:none;
+    background:#6955F4;
+    color:#fff;
+    font-size:22px;
+}
+
+.header h4{
+    margin:0;
+    font-weight:600;
+}
+
+.wallet{
+    margin:15px;
+    height:145px;
+    border-radius:22px;
+    background:#6955F4;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+}
+
+.wallet span{
+    font-size:45px;
+}
+
+.wallet h1{
+    margin-left:10px;
+    font-size:52px;
+    font-weight:700;
+}
+
+.reward-card{
+
+    background:#fff;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.25s;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.reward-top{
+
+    height:165px;
+    background:#ECECFB;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+
+}
+
+.reward-top img{
+
+    width:90px;
+    height:90px;
+    object-fit:contain;
+
+}
+
+.reward-bottom{
+
+    height:48px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:5px;
+    font-weight:600;
+
+}
+
+.reward-bottom i{
+
+    color:#FFD700;
+
+}
+
+.locked{
+
+    filter:grayscale(100%);
+    opacity:.45;
+
+}
+
+.lock-icon{
+
+    position:absolute;
+    color:#fff;
+    font-size:34px;
+
+}
+
+.unlocked{
+
+    border:3px solid #45B35B;
+
+}
+
+.locked-card{
+
+    border:1px solid #eee;
+
+}
+
+</style>
+
+</head>
+<body>
+
+
+<div class="header">
+
+<button class="backBtn" onclick="history.back()">
+<i class="bi bi-arrow-left"></i>
+</button>
+
+<h4>Rewards</h4>
+
+</div>
+
+
+<div class="wallet">
+
+<span>🪙</span>
+
+<h1 id="coinText">0</h1>
+
+</div>
+
+
+<div class="container">
+
+<div class="row g-3" id="rewardList"></div>
+
+</div>
+
+<script>
+
+const rewards=[
+
+{
+name:"Backpack",
+price:0,
+img:"https://cdn-icons-png.flaticon.com/512/1046/1046857.png"
+},
+
+{
+name:"Cap",
+price:30,
+img:"https://cdn-icons-png.flaticon.com/512/1867/1867564.png"
+},
+
+{
+name:"T Shirt",
+price:80,
+img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png"
+},
+
+{
+name:"Watch",
+price:150,
+img:"https://cdn-icons-png.flaticon.com/512/3103/3103446.png"
+},
+
+{
+name:"Shoes",
+price:250,
+img:"https://cdn-icons-png.flaticon.com/512/2589/2589906.png"
+},
+
+{
+name:"Headphone",
+price:350,
+img:"https://cdn-icons-png.flaticon.com/512/5977/5977575.png"
+},
+
+{
+name:"Dress",
+price:450,
+img:"https://cdn-icons-png.flaticon.com/512/892/892458.png"
+},
+
+{
+name:"Game Pad",
+price:700,
+img:"https://cdn-icons-png.flaticon.com/512/808/808439.png"
+},
+
+{
+name:"Laptop",
+price:1000,
+img:"https://cdn-icons-png.flaticon.com/512/179/179386.png"
+},
+
+{
+name:"Phone",
+price:1500,
+img:"https://cdn-icons-png.flaticon.com/512/545/545245.png"
+}
+
+];
+
+
+let coins=parseInt(localStorage.getItem("MySalary"))||0;
+
+document.getElementById("coinText").innerHTML=coins;
+
+let html="";
+
+rewards.forEach(item=>{
+
+let unlock=coins>=item.price;
+
+html+=`
+
+<div class="col-6">
+
+<div class="reward-card ${unlock?'unlocked':'locked-card'}">
+
+<div class="reward-top">
+
+<img src="${item.img}" class="${unlock?'':'locked'}">
+
+${unlock?'':'<i class="bi bi-lock-fill lock-icon"></i>'}
+
+</div>
+
+<div class="reward-bottom">
+
+<i class="bi bi-coin"></i>
+
+${item.price}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("rewardList").innerHTML=html;
+
+</script>
+
+</body>
+</html>
