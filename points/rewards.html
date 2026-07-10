@@ -1,281 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
 <title>Rewards</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
 
 body{
-    background:#fafafa;
-    font-family:Arial,sans-serif;
+    background:#f8f8f8;
+    font-family:'Segoe UI',sans-serif;
+    padding-bottom:30px;
 }
 
+/* Header */
+
 .header{
+    background:#fff;
     padding:18px 16px;
     display:flex;
     align-items:center;
     gap:15px;
-    background:#fff;
+    border-bottom:1px solid #eee;
 }
 
-.backBtn{
-    width:48px;
-    height:48px;
-    border-radius:14px;
+.back-btn{
+    width:52px;
+    height:52px;
     border:none;
-    background:#6955F4;
+    border-radius:14px;
+    background:#6C5CE7;
     color:#fff;
     font-size:22px;
 }
 
-.header h4{
-    margin:0;
+.page-title{
+    font-size:28px;
     font-weight:600;
+    color:#222;
 }
 
-.wallet{
-    margin:15px;
+/* Balance Card */
+
+.balance-card{
+    margin:16px;
     height:145px;
-    border-radius:22px;
-    background:#6955F4;
+    border-radius:24px;
+    background:linear-gradient(135deg,#6C5CE7,#7158FF);
     display:flex;
     justify-content:center;
     align-items:center;
+    gap:12px;
     color:#fff;
 }
 
-.wallet span{
-    font-size:45px;
+.balance-card .coin{
+    font-size:42px;
 }
 
-.wallet h1{
-    margin-left:10px;
+.balance-card .amount{
     font-size:52px;
     font-weight:700;
 }
 
+/* Reward Card */
+
 .reward-card{
-
     background:#fff;
-    border-radius:20px;
+    border-radius:22px;
     overflow:hidden;
-    transition:.25s;
+    transition:.3s;
     box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
 
+.reward-card.unlocked{
+    border:3px solid #4CAF50;
+}
+
+.reward-card.locked{
+    border:1px solid #e6e6e6;
 }
 
 .reward-top{
-
-    height:165px;
-    background:#ECECFB;
+    height:170px;
+    background:#ECECF8;
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     position:relative;
-
 }
 
-.reward-top img{
-
-    width:90px;
-    height:90px;
-    object-fit:contain;
-
+.reward-emoji{
+    font-size:78px;
+    transition:.3s;
 }
 
-.reward-bottom{
-
-    height:48px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:5px;
-    font-weight:600;
-
-}
-
-.reward-bottom i{
-
-    color:#FFD700;
-
-}
-
-.locked{
-
+.reward-card.locked .reward-emoji{
     filter:grayscale(100%);
-    opacity:.45;
-
+    opacity:.35;
 }
 
 .lock-icon{
-
     position:absolute;
     color:#fff;
-    font-size:34px;
-
+    font-size:38px;
 }
 
-.unlocked{
-
-    border:3px solid #45B35B;
-
+.reward-bottom{
+    height:50px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    font-size:22px;
+    font-weight:600;
+    color:#777;
 }
 
-.locked-card{
+.reward-bottom i{
+    color:#F4C542;
+    font-size:18px;
+}
 
-    border:1px solid #eee;
-
+.reward-name{
+    text-align:center;
+    font-size:13px;
+    color:#666;
+    padding-bottom:10px;
 }
 
 </style>
-
 </head>
 <body>
 
+<!-- Header -->
 
 <div class="header">
 
-<button class="backBtn" onclick="history.back()">
-<i class="bi bi-arrow-left"></i>
-</button>
+    <button class="back-btn" onclick="history.back()">
+        <i class="bi bi-arrow-left"></i>
+    </button>
 
-<h4>Rewards</h4>
-
-</div>
-
-
-<div class="wallet">
-
-<span>🪙</span>
-
-<h1 id="coinText">0</h1>
+    <div class="page-title">Rewards</div>
 
 </div>
 
+<!-- Balance -->
+
+<div class="balance-card">
+
+    <div class="coin">🪙</div>
+
+    <div class="amount" id="coinBalance">0</div>
+
+</div>
+
+<!-- Rewards Grid -->
 
 <div class="container">
 
-<div class="row g-3" id="rewardList"></div>
+    <div class="row g-3" id="rewardContainer"></div>
 
 </div>
 
 <script>
 
-const rewards=[
+// Coins fetch from localStorage
+const userCoins = parseInt(localStorage.getItem("MySalary")) || 35;
 
-{
-name:"Backpack",
-price:0,
-img:"https://cdn-icons-png.flaticon.com/512/1046/1046857.png"
-},
+document.getElementById("coinBalance").innerText = userCoins;
 
-{
-name:"Cap",
-price:30,
-img:"https://cdn-icons-png.flaticon.com/512/1867/1867564.png"
-},
+// Rewards List
 
-{
-name:"T Shirt",
-price:80,
-img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png"
-},
+const rewards = [
 
-{
-name:"Watch",
-price:150,
-img:"https://cdn-icons-png.flaticon.com/512/3103/3103446.png"
-},
+    { emoji:'🎒', name:'Backpack', price:0 },
 
-{
-name:"Shoes",
-price:250,
-img:"https://cdn-icons-png.flaticon.com/512/2589/2589906.png"
-},
+    { emoji:'🧢', name:'Cap', price:30 },
 
-{
-name:"Headphone",
-price:350,
-img:"https://cdn-icons-png.flaticon.com/512/5977/5977575.png"
-},
+    { emoji:'👕', name:'T-Shirt', price:80 },
 
-{
-name:"Dress",
-price:450,
-img:"https://cdn-icons-png.flaticon.com/512/892/892458.png"
-},
+    { emoji:'⌚', name:'Watch', price:150 },
 
-{
-name:"Game Pad",
-price:700,
-img:"https://cdn-icons-png.flaticon.com/512/808/808439.png"
-},
+    { emoji:'👟', name:'Shoes', price:250 },
 
-{
-name:"Laptop",
-price:1000,
-img:"https://cdn-icons-png.flaticon.com/512/179/179386.png"
-},
+    { emoji:'🎧', name:'Headphones', price:350 },
 
-{
-name:"Phone",
-price:1500,
-img:"https://cdn-icons-png.flaticon.com/512/545/545245.png"
-}
+    { emoji:'👗', name:'Dress', price:450 },
+
+    { emoji:'🎮', name:'Game Controller', price:700 },
+
+    { emoji:'💻', name:'Laptop', price:1000 },
+
+    { emoji:'📱', name:'Smartphone', price:1500 }
 
 ];
 
+const container = document.getElementById("rewardContainer");
 
-let coins=parseInt(localStorage.getItem("MySalary"))||0;
+rewards.forEach(item => {
 
-document.getElementById("coinText").innerHTML=coins;
+    const unlocked = userCoins >= item.price;
 
-let html="";
+    container.innerHTML += `
+    
+    <div class="col-6">
 
-rewards.forEach(item=>{
+        <div class="reward-card ${unlocked ? 'unlocked' : 'locked'}">
 
-let unlock=coins>=item.price;
+            <div class="reward-top">
 
-html+=`
+                <div class="reward-emoji">
+                    ${item.emoji}
+                </div>
 
-<div class="col-6">
+                ${unlocked ? '' : '<i class="bi bi-lock-fill lock-icon"></i>'}
 
-<div class="reward-card ${unlock?'unlocked':'locked-card'}">
+            </div>
 
-<div class="reward-top">
+            <div class="reward-bottom">
 
-<img src="${item.img}" class="${unlock?'':'locked'}">
+                <i class="bi bi-coin"></i>
 
-${unlock?'':'<i class="bi bi-lock-fill lock-icon"></i>'}
+                ${item.price}
 
-</div>
+            </div>
 
-<div class="reward-bottom">
+        </div>
 
-<i class="bi bi-coin"></i>
+    </div>
 
-${item.price}
-
-</div>
-
-</div>
-
-</div>
-
-`;
+    `;
 
 });
-
-document.getElementById("rewardList").innerHTML=html;
 
 </script>
 
 </body>
 </html>
+
