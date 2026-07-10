@@ -1,6 +1,8 @@
 
 /*************** Banner *****************/
 
+.container { max-width:660px; }
+
 .hero{
     margin:0 16px;
     background:linear-gradient(135deg,#6958ff,#7654e8);
