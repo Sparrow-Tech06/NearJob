@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find the File</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:30px}
+.header{background:#fff;padding:14px 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #e6eaf0;position:sticky;top:0;z-index:100}
+.back-btn{width:46px;height:46px;border:none;border-radius:14px;background:linear-gradient(135deg,#6C5CE7,#a29bfe);color:#fff;font-size:20px;transition:.2s}
+.back-btn:hover{transform:scale(1.05)}
+.page-title{font-size:22px;font-weight:700;color:#1a1a2e}
+.header-badge{margin-left:auto;background:#6C5CE7;color:#fff;padding:4px 14px;border-radius:40px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+.quiz-container{max-width:700px;margin:16px auto;padding:0 14px}
+.question-card{background:#fff;border-radius:22px;padding:24px 20px 20px;box-shadow:0 4px 20px rgba(0,0,0,.05);border:1px solid #edeef3}
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.q-number{font-size:13px;font-weight:600;color:#6C5CE7;background:#f0edff;padding:3px 14px;border-radius:40px}
+.q-score{font-size:14px;font-weight:600;color:#555}
+.q-score i{color:#4CAF50}
+.question-text{font-size:19px;font-weight:600;color:#1a1a2e;margin-bottom:18px}
+.question-text .file-icon{font-size:26px;margin-right:8px}
+.options-grid{display:flex;flex-direction:column;gap:8px}
+.opt-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid #e6eaf0;border-radius:14px;background:#fafbfc;cursor:pointer;transition:.2s;font-size:15px;font-weight:500;color:#1a1a2e;width:100%;text-align:left}
+.opt-btn:hover:not(.disabled){border-color:#b0a8f0;background:#f5f3ff}
+.opt-btn .letter{width:30px;height:30px;border-radius:50%;background:#e9ecf3;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#666;flex-shrink:0}
+.opt-btn .emoji{font-size:22px;flex-shrink:0}
+.opt-btn .label{flex:1}
+.opt-btn.correct{border-color:#4CAF50;background:#e8f5e9}
+.opt-btn.correct .letter{background:#4CAF50;color:#fff}
+.opt-btn.wrong{border-color:#e74c3c;background:#fde8e8}
+.opt-btn.wrong .letter{background:#e74c3c;color:#fff}
+.opt-btn.disabled{cursor:default;opacity:.7}
+.opt-btn.disabled:hover{transform:none}
+.feedback{ margin-top:14px;padding:10px 16px;border-radius:14px;font-weight:500;display:none;align-items:center;gap:10px}
+.feedback.show{display:flex}
+.feedback.correct{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.feedback.wrong{background:#fde8e8;color:#c62828;border:1px solid #ef9a9a}
+.feedback i{font-size:20px}
+.completion-card{background:#fff;border-radius:24px;padding:32px 24px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.06);border:2px solid #4CAF50;display:none}
+.completion-card.show{display:block;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.completion-card .big-icon{font-size:64px;margin-bottom:8px}
+.completion-card h3{font-weight:700;color:#1a1a2e}
+.completion-card .reward-box{background:#e8f5e9;color:#2e7d32;padding:10px 24px;border-radius:60px;font-size:26px;font-weight:700;display:inline-block;margin:8px 0}
+.completion-card .reward-box i{font-size:26px;margin-right:6px}
+.btn-retry{margin-top:14px;padding:10px 28px;border:2px solid #6C5CE7;border-radius:14px;background:transparent;color:#6C5CE7;font-weight:600;transition:.3s}
+.btn-retry:hover{background:#6C5CE7;color:#fff}
+</style>
+</head>
+<body>
 
+<!-- Header -->
+<div class="header">
+    <button class="back-btn" onclick="history.back()"><i class="bi bi-arrow-left"></i></button>
+    <div class="page-title">📂 Find File</div>
+    <div class="header-badge"><i class="bi bi-coin"></i> <span id="headerCoins">0</span></div>
+</div>
+
+<!-- Quiz -->
+<div class="quiz-container" id="quizApp">
+    <div class="question-card" id="questionCard">
+        <div class="q-header">
+            <span class="q-number" id="qNumber">Q1/5</span>
+            <span class="q-score"><i class="bi bi-check-circle-fill"></i> <span id="scoreDisplay">0/5</span></span>
+        </div>
+        <div class="question-text" id="qText"><span class="file-icon">📄</span> Which file is correct?</div>
+        <div class="options-grid" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"><i class="bi"></i> <span id="feedbackText"></span></div>
+    </div>
+    <div class="completion-card" id="completionCard">
+        <div class="big-icon" id="resultIcon">🎉</div>
+        <h3 id="resultTitle">Quiz Complete!</h3>
+        <div class="reward-box" id="rewardBox"><i class="bi bi-coin"></i> +0</div>
+        <p id="resultSub">You got 0/5 correct</p>
+        <button class="btn-retry" onclick="resetQuiz()">🔄 Try Again</button>
+    </div>
+</div>
+
+<script>
+// ===== DATA =====
+const qs = [
+    {q:'Which file is an image?', icon:'🖼️', opts:['doc.pdf','photo.jpg','video.mp4','music.mp3'], ans:1},
+    {q:'Which file is a text document?', icon:'📝', opts:['image.png','data.csv','notes.txt','pres.pptx'], ans:2},
+    {q:'Which file is a spreadsheet?', icon:'📊', opts:['report.xlsx','photo.jpeg','audio.wav','script.js'], ans:0},
+    {q:'Which file is a video?', icon:'🎬', opts:['song.mp3','movie.mp4','doc.docx','image.gif'], ans:1},
+    {q:'Which file is code?', icon:'💻', opts:['style.css','data.json','app.js','readme.md'], ans:2}
+];
+
+// ===== STATE =====
+let idx=0, score=0, answered=false, done=false, coins=parseInt(localStorage.getItem('MySalary'))||0;
+
+// ===== DOM REFS =====
+const $=id=>document.getElementById(id);
+const qNum=$('qNumber'), qText=$('qText'), opts=$('optionsContainer'), fb=$('feedback'), fbText=$('feedbackText');
+const scoreD=$('scoreDisplay'), headerCoins=$('headerCoins'), qCard=$('questionCard'), compCard=$('completionCard');
+const resultIcon=$('resultIcon'), resultTitle=$('resultTitle'), rewardBox=$('rewardBox'), resultSub=$('resultSub');
+
+// ===== HELPERS =====
+function updateCoins(){ headerCoins.textContent=coins; }
+function androidNotify(){ if(window.Android && typeof Android.notifyuser==='function') Android.notifyuser(1); }
+
+// ===== RENDER =====
+function render(){
+    if(done) return;
+    const q=qs[idx];
+    qNum.textContent=`Q${idx+1}/5`;
+    qText.innerHTML=`<span class="file-icon">${q.icon}</span> ${q.q}`;
+    scoreD.textContent=`${score}/5`;
+    opts.innerHTML='';
+    const letters=['A','B','C','D'];
+    q.opts.forEach((opt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='opt-btn';
+        btn.innerHTML=`<span class="letter">${letters[i]}</span><span class="emoji">${['📄','🖼️','🎬','🎵','📊','🔊','💻','📖','🎨','📦'][i]||'📁'}</span><span class="label">${opt}</span>`;
+        btn.onclick=()=>answer(i);
+        opts.appendChild(btn);
+    });
+    fb.className='feedback';
+    fb.style.display='none';
+    answered=false;
+}
+
+// ===== ANSWER =====
+function answer(selected){
+    if(answered || done) return;
+    const q=qs[idx], correct=selected===q.ans;
+    const btns=document.querySelectorAll('.opt-btn');
+    btns.forEach(b=>b.classList.add('disabled'));
+    btns.forEach((b,i)=>{
+        if(i===q.ans) b.classList.add('correct');
+        if(i===selected && !correct) b.classList.add('wrong');
+    });
+    if(correct) score++;
+    fb.className=`feedback show ${correct?'correct':'wrong'}`;
+    fb.querySelector('i').className=`bi ${correct?'bi-check-circle-fill':'bi-x-circle-fill'}`;
+    fbText.textContent=correct?'✅ Correct!':'❌ Wrong!';
+    answered=true;
+    scoreD.textContent=`${score}/5`;
+    
+    // Auto next after 2 sec
+    setTimeout(()=>{
+        if(idx<4){
+            idx++;
+            render();
+        }else{
+            finish();
+        }
+    },2000);
+}
+
+// ===== FINISH =====
+function finish(){
+    done=true;
+    qCard.style.display='none';
+    compCard.classList.add('show');
+    const passed=score>=3;
+    resultIcon.textContent=passed?'🎉':'😅';
+    resultTitle.textContent=passed?'Quiz Complete!':'Keep Trying!';
+    const reward=passed?10:0;
+    rewardBox.innerHTML=`<i class="bi bi-coin"></i> +${reward}`;
+    resultSub.textContent=`You got ${score}/5 correct ${passed?'🎊':''}`;
+    if(passed){
+        coins+=10;
+        localStorage.setItem('MySalary',coins);
+        updateCoins();
+        androidNotify();
+    }
+}
+
+// ===== RESET =====
+function resetQuiz(){
+    idx=0; score=0; done=false; answered=false;
+    compCard.classList.remove('show');
+    qCard.style.display='block';
+    render();
+    updateCoins();
+}
+
+// ===== INIT =====
+updateCoins();
+render();
+</script>
+</body>
+</html>
