@@ -18,7 +18,6 @@
     .question-card{background:#fff;border-radius:22px;padding:24px 20px 20px;box-shadow:0 4px 20px rgba(0,0,0,.05);border:1px solid #edeef3}
     .q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
     .q-number{font-size:13px;font-weight:600;color:#6C5CE7;background:#f0edff;padding:3px 14px;border-radius:40px}
-    /* scoreDisplay and related items removed */
     .question-text{font-size:19px;font-weight:600;color:#1a1a2e;margin-bottom:18px}
     .question-text .file-icon{font-size:26px;margin-right:8px}
     .options-grid{display:flex;flex-direction:column;gap:8px}
@@ -33,7 +32,7 @@
     .opt-btn.wrong .letter{background:#e74c3c;color:#fff}
     .opt-btn.disabled{cursor:default;opacity:.7}
     .opt-btn.disabled:hover{transform:none}
-    .feedback{ margin-top:14px;padding:10px 16px;border-radius:14px;font-weight:500;display:none;align-items:center;gap:10px}
+    .feedback{margin-top:14px;padding:10px 16px;border-radius:14px;font-weight:500;display:none;align-items:center;gap:10px}
     .feedback.show{display:flex}
     .feedback.correct{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
     .feedback.wrong{background:#fde8e8;color:#c62828;border:1px solid #ef9a9a}
@@ -63,7 +62,6 @@
   <div class="question-card" id="questionCard">
     <div class="q-header">
       <span class="q-number" id="qNumber">Q1/5</span>
-      <!-- scoreDisplay and related elements removed -->
     </div>
     <div class="question-text" id="qText"><span class="file-icon">📄</span> Which file is correct?</div>
     <div class="options-grid" id="optionsContainer"></div>
@@ -79,7 +77,6 @@
 </div>
 
 <script>
-  // ===== OFFICE FILES DATA =====
   const qs = [
     { q: 'Which file is a Word document?', icon: '📝', opts: ['report.docx', 'data.xlsx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
     { q: 'Which file is an Excel spreadsheet?', icon: '📊', opts: ['budget.xlsx', 'letter.doc', 'slides.pptx', 'contract.pdf'], ans: 0 },
@@ -88,25 +85,21 @@
     { q: 'Which file is a compressed ZIP archive?', icon: '📦', opts: ['backup.zip', 'document.docx', 'spreadsheet.xlsx', 'image.png'], ans: 0 }
   ];
 
-  // ===== STATE =====
   let idx=0, score=0, answered=false, done=false, coins=parseInt(localStorage.getItem('MySalary'))||0;
 
-  // ===== DOM REFS =====
   const $=id=>document.getElementById(id);
   const qNum=$('qNumber'), qText=$('qText'), opts=$('optionsContainer'), fb=$('feedback'), fbText=$('feedbackText');
   const headerCoins=$('headerCoins'), qCard=$('questionCard'), compCard=$('completionCard');
   const resultIcon=$('resultIcon'), resultTitle=$('resultTitle'), rewardBox=$('rewardBox'), resultSub=$('resultSub');
 
-  // ===== HELPERS =====
   function updateCoins(){ headerCoins.textContent=coins; }
 
   function androidNotify(){ 
-    if(window.Android && typeof Android.notifyuser==='function') {
+    if(window.Android && typeof Android.notifyuser === 'function') {
       Android.notifyuser(1); 
     }
   }
 
-  // ===== FIXED: ADD TO HISTORY - Direct localStorage =====
   function addToHistory(gameName, coinsEarned, won) {
     try {
       let history = [];
@@ -121,11 +114,9 @@
       history.push(entry);
       if (history.length > 100) history = history.slice(-100);
       localStorage.setItem('gameHistory', JSON.stringify(history));
-      console.log('✅ History saved:', entry);
-    } catch(e) { console.error('❌ Error saving history:', e); }
+    } catch(e) {}
   }
 
-  // ===== RENDER =====
   function render(){
     if(done) return;
     const q=qs[idx];
@@ -150,7 +141,6 @@
     answered=false;
   }
 
-  // ===== ANSWER =====
   function answer(selected){
     if(answered || done) return;
     const q=qs[idx], correct=selected===q.ans;
@@ -176,7 +166,6 @@
     },2000);
   }
 
-  // ===== FINISH =====
   function finish(){
     done=true;
     qCard.style.display='none';
@@ -199,7 +188,6 @@
     }
   }
 
-  // ===== RESET =====
   function resetQuiz(){
     idx=0; score=0; done=false; answered=false;
     compCard.classList.remove('show');
@@ -208,10 +196,8 @@
     updateCoins();
   }
 
-  // ===== INIT =====
   updateCoins();
   render();
-  console.log('📂 Find the File Quiz loaded!');
 </script>
 </body>
 </html>
