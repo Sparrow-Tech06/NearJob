@@ -1,11 +1,14 @@
-
+:root {
+    --primary: #6F5EE8 ;
+    --radius: 16px;
+}
 /*************** Banner *****************/
 
 .container { max-width:660px; }
 
 .hero{
     margin:0 16px;
-    background:linear-gradient(135deg,#6958ff,#7654e8);
+    background: var(--primary) ;
     border-radius:18px;
     padding:20px;
     color:#fff;
