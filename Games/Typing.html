@@ -75,16 +75,16 @@
 
 <script>
   const allQuestions = [
-    { q: 'Which file is a Word document?', opts: ['report.docx', 'data.xlsx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is an Excel spreadsheet?', opts: ['budget.xlsx', 'letter.doc', 'slides.pptx', 'contract.pdf'], ans: 0 },
-    { q: 'Which file is a PDF document?', opts: ['manual.pdf', 'sheet.xls', 'notes.docx', 'chart.pptx'], ans: 0 },
-    { q: 'Which file is a PowerPoint presentation?', opts: ['proposal.pptx', 'report.docx', 'data.csv', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is a compressed ZIP archive?', opts: ['backup.zip', 'document.docx', 'spreadsheet.xlsx', 'image.png'], ans: 0 },
-    { q: 'Which file is an image?', opts: ['photo.jpg', 'document.pdf', 'spreadsheet.xlsx', 'presentation.pptx'], ans: 0 },
-    { q: 'Which file is a text document?', opts: ['notes.txt', 'budget.xlsx', 'slides.pptx', 'report.pdf'], ans: 0 },
-    { q: 'Which file is a CSV file?', opts: ['data.csv', 'report.docx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is a JSON file?', opts: ['config.json', 'data.xlsx', 'notes.docx', 'image.png'], ans: 0 },
-    { q: 'Which file is an XML file?', opts: ['settings.xml', 'budget.xlsx', 'presentation.pptx', 'report.pdf'], ans: 0 }
+       { q: 'What is the shortcut key for Copy?', opts: ['Ctrl + V', 'Ctrl + C', 'Ctrl + Z', 'Ctrl + X'], ans: 1 },
+       { q: 'What is the shortcut key for Paste?', opts: ['Ctrl + P', 'Ctrl + X', 'Ctrl + V', 'Ctrl + C'], ans: 2 },
+       { q: 'What is the shortcut key for Cut?', opts: ['Ctrl + A', 'Ctrl + X', 'Ctrl + C', 'Ctrl + V'], ans: 1 },
+       { q: 'What is the shortcut key for Undo?', opts: ['Ctrl + Y', 'Ctrl + Z', 'Ctrl + S', 'Ctrl + F'], ans: 1 },
+       { q: 'What is the shortcut key for Redo?', opts: ['Ctrl + X', 'Ctrl + Z', 'Ctrl + Y', 'Ctrl + C'], ans: 2 },
+       { q: 'What is the shortcut key for Save?', opts: ['Ctrl + O', 'Ctrl + P', 'Ctrl + S', 'Ctrl + N'], ans: 2 },
+       { q: 'What is the shortcut key for Select All?', opts: ['Ctrl + F', 'Ctrl + D', 'Ctrl + A', 'Ctrl + C'], ans: 2 },
+       { q: 'What is the shortcut key for Find?', opts: ['Ctrl + H', 'Ctrl + R', 'Ctrl + F', 'Ctrl + G'], ans: 2 },
+       { q: 'What is the shortcut key for Print?', opts: ['Ctrl + O', 'Ctrl + P', 'Ctrl + S', 'Ctrl + T'], ans: 1 },
+       { q: 'What is the shortcut key for Open?', opts: ['Ctrl + L', 'Ctrl + N', 'Ctrl + O', 'Ctrl + P'], ans: 2 }
   ];
 
   function getRandomQuestions(count) {
@@ -188,7 +188,7 @@
       coins+=10;
       localStorage.setItem('MySalary', coins);
       updateCoins();
-      addToHistory('Find the File', 10);
+      addToHistory('Typing Game', 10);
       androidNotify();
     }
     // No history saved when user doesn't earn coins
