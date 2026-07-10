@@ -3,7 +3,7 @@
     margin:16px;
     height:145px;
     border-radius:24px;
-    background:linear-gradient(135deg,#6C5CE7,#7158FF);
+    background: var(--primary) ;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -20,7 +20,7 @@
     font-weight:700;
 }
 
-/* Reward Card */
+/****************** Reward Card ******************/
 
 .reward-card{
     background:#fff;
