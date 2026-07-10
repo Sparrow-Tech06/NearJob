@@ -82,6 +82,10 @@ header {
 }
 .back-btn:active{ transform:scale(.96); }
 
+.icon-circle {
+  
+}
+
 /******************************************/
 button, a {
   touch-action: manipulation;
