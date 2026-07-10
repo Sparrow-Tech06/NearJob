@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     *{box-sizing:border-box}
-    body{background:#fff;font-family:'Segoe UI',sans-serif;padding-bottom:30px}
+    body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:30px}
     .header{background:#fff;padding:14px 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #e6eaf0;position:sticky;top:0;z-index:100}
     .back-btn{width:46px;height:46px;border:none;border-radius:14px;background:linear-gradient(135deg,#6C5CE7,#a29bfe);color:#fff;font-size:20px;transition:.2s}
     .back-btn:hover{transform:scale(1.05)}
@@ -24,7 +24,6 @@
     .opt-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid #e6eaf0;border-radius:14px;background:#fafbfc;cursor:pointer;transition:.2s;font-size:15px;font-weight:500;color:#1a1a2e;width:100%;text-align:left}
     .opt-btn:hover:not(.disabled){border-color:#b0a8f0;background:#f5f3ff}
     .opt-btn .letter{width:30px;height:30px;border-radius:50%;background:#e9ecf3;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#666;flex-shrink:0}
-    .opt-btn .emoji{font-size:22px;flex-shrink:0}
     .opt-btn .label{flex:1}
     .opt-btn.correct{border-color:#4CAF50;background:#e8f5e9}
     .opt-btn.correct .letter{background:#4CAF50;color:#fff}
@@ -50,20 +49,18 @@
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <button class="back-btn" onclick="history.back()"><i class="bi bi-arrow-left"></i></button>
-  <div class="page-title">📂 Find File</div>
+  <div class="page-title">Find File</div>
   <div class="header-badge"><i class="bi bi-coin"></i> <span id="headerCoins">0</span></div>
 </div>
 
-<!-- Quiz -->
 <div class="quiz-container" id="quizApp">
   <div class="question-card" id="questionCard">
     <div class="q-header">
       <span class="q-number" id="qNumber">Q1/5</span>
     </div>
-    <div class="question-text" id="qText"><span class="file-icon">📄</span> Which file is correct?</div>
+    <div class="question-text" id="qText">Which file is correct?</div>
     <div class="options-grid" id="optionsContainer"></div>
     <div class="feedback" id="feedback"><i class="bi"></i> <span id="feedbackText"></span></div>
   </div>
@@ -72,19 +69,34 @@
     <h3 id="resultTitle">Quiz Complete!</h3>
     <div class="reward-box" id="rewardBox"><i class="bi bi-coin"></i> +0</div>
     <p id="resultSub">You got 0/5 correct</p>
-    <button class="btn-retry" onclick="resetQuiz()">🔄 Try Again</button>
+    <button class="btn-retry" onclick="resetQuiz()">Try Again</button>
   </div>
 </div>
 
 <script>
-  const qs = [
-    { q: 'Which file is a Word document?', icon: '📝', opts: ['report.docx', 'data.xlsx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is an Excel spreadsheet?', icon: '📊', opts: ['budget.xlsx', 'letter.doc', 'slides.pptx', 'contract.pdf'], ans: 0 },
-    { q: 'Which file is a PDF document?', icon: '📄', opts: ['manual.pdf', 'sheet.xls', 'notes.docx', 'chart.pptx'], ans: 0 },
-    { q: 'Which file is a PowerPoint presentation?', icon: '📽️', opts: ['proposal.pptx', 'report.docx', 'data.csv', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is a compressed ZIP archive?', icon: '📦', opts: ['backup.zip', 'document.docx', 'spreadsheet.xlsx', 'image.png'], ans: 0 }
+  const allQuestions = [
+    { q: 'Which file is a Word document?', opts: ['report.docx', 'data.xlsx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
+    { q: 'Which file is an Excel spreadsheet?', opts: ['budget.xlsx', 'letter.doc', 'slides.pptx', 'contract.pdf'], ans: 0 },
+    { q: 'Which file is a PDF document?', opts: ['manual.pdf', 'sheet.xls', 'notes.docx', 'chart.pptx'], ans: 0 },
+    { q: 'Which file is a PowerPoint presentation?', opts: ['proposal.pptx', 'report.docx', 'data.csv', 'invoice.pdf'], ans: 0 },
+    { q: 'Which file is a compressed ZIP archive?', opts: ['backup.zip', 'document.docx', 'spreadsheet.xlsx', 'image.png'], ans: 0 },
+    { q: 'Which file is an image?', opts: ['photo.jpg', 'document.pdf', 'spreadsheet.xlsx', 'presentation.pptx'], ans: 0 },
+    { q: 'Which file is a text document?', opts: ['notes.txt', 'budget.xlsx', 'slides.pptx', 'report.pdf'], ans: 0 },
+    { q: 'Which file is a CSV file?', opts: ['data.csv', 'report.docx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
+    { q: 'Which file is a JSON file?', opts: ['config.json', 'data.xlsx', 'notes.docx', 'image.png'], ans: 0 },
+    { q: 'Which file is an XML file?', opts: ['settings.xml', 'budget.xlsx', 'presentation.pptx', 'report.pdf'], ans: 0 }
   ];
 
+  function getRandomQuestions(count) {
+    const shuffled = [...allQuestions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, count);
+  }
+
+  let qs = getRandomQuestions(5);
   let idx=0, score=0, answered=false, done=false, coins=parseInt(localStorage.getItem('MySalary'))||0;
 
   const $=id=>document.getElementById(id);
@@ -121,18 +133,13 @@
     if(done) return;
     const q=qs[idx];
     qNum.textContent=`Q${idx+1}/5`;
-    qText.innerHTML=`<span class="file-icon">${q.icon}</span> ${q.q}`;
+    qText.textContent = q.q;
     opts.innerHTML='';
     const letters=['A','B','C','D'];
     q.opts.forEach((opt,i)=>{
       const btn=document.createElement('button');
       btn.className='opt-btn';
-      const emoji = opt.includes('docx') ? '📝' :
-                    opt.includes('xlsx') ? '📊' :
-                    opt.includes('pdf') ? '📄' :
-                    opt.includes('pptx') ? '📽️' :
-                    opt.includes('zip') ? '📦' : '📁';
-      btn.innerHTML=`<span class="letter">${letters[i]}</span><span class="emoji">${emoji}</span><span class="label">${opt}</span>`;
+      btn.innerHTML=`<span class="letter">${letters[i]}</span><span class="label">${opt}</span>`;
       btn.onclick=()=>answer(i);
       opts.appendChild(btn);
     });
@@ -153,7 +160,7 @@
     if(correct) score++;
     fb.className=`feedback show ${correct?'correct':'wrong'}`;
     fb.querySelector('i').className=`bi ${correct?'bi-check-circle-fill':'bi-x-circle-fill'}`;
-    fbText.textContent=correct?'✅ Correct!':`❌ Wrong! Correct: ${q.opts[q.ans]}`;
+    fbText.textContent=correct?'Correct!':`Wrong! Correct: ${q.opts[q.ans]}`;
     answered=true;
     
     setTimeout(()=>{
@@ -189,6 +196,7 @@
   }
 
   function resetQuiz(){
+    qs = getRandomQuestions(5);
     idx=0; score=0; done=false; answered=false;
     compCard.classList.remove('show');
     qCard.style.display='block';
