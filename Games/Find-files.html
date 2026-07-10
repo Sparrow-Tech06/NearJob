@@ -112,7 +112,7 @@
     }
   }
 
-  function addToHistory(gameName, coinsEarned, won) {
+  function addToHistory(gameName, coinsEarned) {
     try {
       let history = [];
       const stored = localStorage.getItem('gameHistory');
@@ -122,7 +122,7 @@
           if (!Array.isArray(history)) history = [];
         } catch(e) { history = []; }
       }
-      const entry = { game: gameName, coins: coinsEarned, won: won, date: new Date().toISOString() };
+      const entry = { game: gameName, coins: coinsEarned, date: new Date().toISOString() };
       history.push(entry);
       if (history.length > 100) history = history.slice(-100);
       localStorage.setItem('gameHistory', JSON.stringify(history));
@@ -188,11 +188,10 @@
       coins+=10;
       localStorage.setItem('MySalary', coins);
       updateCoins();
-      addToHistory('Find the File', 10, true);
+      addToHistory('Find the File', 10);
       androidNotify();
-    } else {
-      addToHistory('Find the File', 0, false);
     }
+    // No history saved when user doesn't earn coins
   }
 
   function resetQuiz(){
