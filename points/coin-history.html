@@ -1,137 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>History</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-*{box-sizing:border-box}
-body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>History</title>
+  <!-- Bootstrap + Icons (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: #f0f2f8;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding-bottom: 40px;
+      margin: 0;
+    }
+    /* Header */
+    .header {
+      background: #fff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid #e6eaf0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .back-btn {
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6C5CE7, #a29bfe);
+      color: #fff;
+      font-size: 20px;
+      transition: .2s;
+    }
+    .back-btn:hover { transform: scale(1.05); }
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    .header-badge {
+      margin-left: auto;
+      background: #6C5CE7;
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* History container */
+    .history-container {
+      max-width: 700px;
+      margin: 16px auto;
+      padding: 0 14px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .history-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .refresh-btn {
+      background: #6C5CE7;
+      color: #fff;
+      border: none;
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: .3s;
+    }
+    .refresh-btn:hover {
+      background: #5a4bd1;
+      transform: scale(1.02);
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .history-item {
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid #edeef3;
+      transition: .2s;
+      animation: slideIn .3s ease;
+    }
+    .history-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,.04);
+    }
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .history-item .icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .history-item .icon-box.green { background: #e8f5e9; color: #4CAF50; }
+    .history-item .icon-box.red { background: #fde8e8; color: #e74c3c; }
+    .history-item .details {
+      flex: 1;
+      min-width: 0;
+    }
+    .history-item .details .game-name {
+      font-weight: 600;
+      color: #1a1a2e;
+      font-size: 15px;
+    }
+    .history-item .details .game-name .game-icon {
+      font-size: 18px;
+      margin-right: 6px;
+    }
+    .history-item .details .timestamp {
+      font-size: 12px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .history-item .details .timestamp i { font-size: 11px; }
+    .history-item .details .result-badge {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .history-item .details .result-badge.win {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .history-item .details .result-badge.loss {
+      background: #fde8e8;
+      color: #c62828;
+    }
+    .history-item .coin-amount {
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .history-item .coin-amount.positive { color: #4CAF50; }
+    .history-item .coin-amount.negative { color: #e74c3c; }
 
-/* Header */
-.header{background:#fff;padding:14px 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #e6eaf0;position:sticky;top:0;z-index:100}
-.back-btn{width:46px;height:46px;border:none;border-radius:14px;background:linear-gradient(135deg,#6C5CE7,#a29bfe);color:#fff;font-size:20px;transition:.2s}
-.back-btn:hover{transform:scale(1.05)}
-.page-title{font-size:22px;font-weight:700;color:#1a1a2e}
-.header-badge{margin-left:auto;background:#6C5CE7;color:#fff;padding:4px 14px;border-radius:40px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      background: #fff;
+      border-radius: 20px;
+      border: 2px dashed #e6eaf0;
+    }
+    .empty-state .big-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .empty-state h5 { color: #1a1a2e; font-weight: 600; }
+    .empty-state p { color: #999; font-size: 14px; }
 
-/* History Container */
-.history-container{max-width:700px;margin:16px auto;padding:0 14px}
-.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.history-title{font-size:16px;font-weight:600;color:#1a1a2e;display:flex;align-items:center;gap:8px}
-.refresh-btn{background:#6C5CE7;color:#fff;border:none;border-radius:40px;padding:6px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:.3s}
-.refresh-btn:hover{background:#5a4bd1;transform:scale(1.02)}
+    /* Stats bar - REMOVED completely: we just hide it */
+    .stats-bar {
+      display: none !important;
+    }
 
-.history-list{display:flex;flex-direction:column;gap:10px}
-
-.history-item{background:#fff;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;border:1px solid #edeef3;transition:.2s;animation:slideIn .3s ease}
-.history-item:hover{transform:translateX(4px);box-shadow:0 4px 16px rgba(0,0,0,.04)}
-@keyframes slideIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
-
-.history-item .icon-box{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.history-item .icon-box.green{background:#e8f5e9;color:#4CAF50}
-.history-item .icon-box.red{background:#fde8e8;color:#e74c3c}
-
-.history-item .details{flex:1;min-width:0}
-.history-item .details .game-name{font-weight:600;color:#1a1a2e;font-size:15px}
-.history-item .details .game-name .game-icon{font-size:18px;margin-right:6px}
-.history-item .details .timestamp{font-size:12px;color:#999;display:flex;align-items:center;gap:4px;margin-top:2px}
-.history-item .details .timestamp i{font-size:11px}
-.history-item .details .result-badge{font-size:11px;padding:2px 10px;border-radius:20px;display:inline-block;margin-top:3px}
-.history-item .details .result-badge.win{background:#e8f5e9;color:#2e7d32}
-.history-item .details .result-badge.loss{background:#fde8e8;color:#c62828}
-
-.history-item .coin-amount{font-weight:700;font-size:18px;display:flex;align-items:center;gap:4px;flex-shrink:0}
-.history-item .coin-amount.positive{color:#4CAF50}
-.history-item .coin-amount.negative{color:#e74c3c}
-
-.empty-state{text-align:center;padding:50px 20px;background:#fff;border-radius:20px;border:2px dashed #e6eaf0}
-.empty-state .big-icon{font-size:56px;display:block;margin-bottom:12px}
-.empty-state h5{color:#1a1a2e;font-weight:600}
-.empty-state p{color:#999;font-size:14px}
-
-/* Total Stats */
-.stats-bar{background:#fff;border-radius:16px;padding:12px 18px;margin-bottom:16px;display:flex;justify-content:space-around;border:1px solid #edeef3}
-.stat-item{text-align:center}
-.stat-item .stat-value{font-size:20px;font-weight:700;color:#1a1a2e}
-.stat-item .stat-label{font-size:11px;color:#999;font-weight:500}
-
-@media(max-width:480px){
-    .history-item{padding:12px 14px;flex-wrap:wrap}
-    .history-item .details{min-width:100%;order:3;margin-top:6px}
-    .stats-bar{flex-wrap:wrap;gap:8px}
-}
-</style>
+    @media (max-width: 480px) {
+      .history-item { padding: 12px 14px; flex-wrap: wrap; }
+      .history-item .details { min-width: 100%; order: 3; margin-top: 6px; }
+    }
+  </style>
 </head>
 <body>
 
 <!-- Header -->
 <div class="header">
-    <button class="back-btn" onclick="history.back()"><i class="bi bi-arrow-left"></i></button>
-    <div class="page-title">📜 History</div>
-    <div class="header-badge"><i class="bi bi-coin"></i> <span id="headerCoins">0</span></div>
+  <button class="back-btn" onclick="history.back()"><i class="bi bi-arrow-left"></i></button>
+  <div class="page-title">📜 History</div>
+  <div class="header-badge"><i class="bi bi-coin"></i> <span id="headerCoins">0</span></div>
 </div>
 
-<!-- History -->
+<!-- History Container (stats-bar removed) -->
 <div class="history-container">
-    <div class="history-header">
-        <div class="history-title">
-            <i class="bi bi-clock-history" style="color:#6C5CE7"></i> Game History
-            <span style="font-size:12px;color:#999;font-weight:400;" id="entryCount">(0 entries)</span>
-        </div>
-        <button class="refresh-btn" onclick="refreshHistory()">
-            <i class="bi bi-arrow-clockwise"></i> Refresh
-        </button>
+  <div class="history-header">
+    <div class="history-title">
+      <i class="bi bi-clock-history" style="color:#6C5CE7"></i> Game History
+      <span style="font-size:12px;color:#999;font-weight:400;" id="entryCount">(0 entries)</span>
     </div>
-    
-    <!-- Stats -->
-    <div class="stats-bar" id="statsBar">
-        <div class="stat-item">
-            <div class="stat-value" id="totalGames">0</div>
-            <div class="stat-label">Total Games</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="totalWins" style="color:#4CAF50">0</div>
-            <div class="stat-label">Wins 🏆</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="totalCoins" style="color:#6C5CE7">0</div>
-            <div class="stat-label">Total Coins 🪙</div>
-        </div>
-    </div>
-    
-    <div class="history-list" id="historyList"></div>
+    <button class="refresh-btn" onclick="refreshHistory()">
+      <i class="bi bi-arrow-clockwise"></i> Refresh
+    </button>
+  </div>
+
+  <!-- STATS BAR – REMOVED (hidden via CSS) -->
+  <!-- <div class="stats-bar"> ... </div> -->
+
+  <div class="history-list" id="historyList"></div>
 </div>
 
 <script>
-// ===== GET HISTORY FROM LOCALSTORAGE =====
-function getHistory() {
-    try {
+  (function() {
+    "use strict";
+
+    // ===== HELPERS =====
+    function getHistory() {
+      try {
         const stored = localStorage.getItem('gameHistory');
         if (!stored) return [];
         const parsed = JSON.parse(stored);
         return Array.isArray(parsed) ? parsed : [];
-    } catch(e) {
+      } catch (e) {
         console.error('Error reading history:', e);
         return [];
+      }
     }
-}
 
-// ===== GET COINS =====
-function getCoins() {
-    return parseInt(localStorage.getItem('MySalary')) || 0;
-}
+    function getCoins() {
+      return parseInt(localStorage.getItem('MySalary')) || 0;
+    }
 
-// ===== UPDATE COINS DISPLAY =====
-function updateCoinsDisplay() {
-    document.getElementById('headerCoins').textContent = getCoins();
-}
+    function updateCoinsDisplay() {
+      document.getElementById('headerCoins').textContent = getCoins();
+    }
 
-// ===== GET GAME ICON =====
-function getGameIcon(gameName) {
-    const icons = {
+    function getGameIcon(gameName) {
+      const icons = {
         'Find the File': '📂',
         'Find File': '📂',
         'Rewards': '🎁',
@@ -140,140 +264,116 @@ function getGameIcon(gameName) {
         'Trivia': '❓',
         'Spin': '🎰',
         'Match': '🔄'
-    };
-    for (let [key, value] of Object.entries(icons)) {
-        if (gameName && gameName.includes(key)) {
-            return value;
-        }
+      };
+      if (!gameName) return '🎮';
+      for (let [key, value] of Object.entries(icons)) {
+        if (gameName.includes(key)) return value;
+      }
+      return '🎮';
     }
-    return '🎮';
-}
 
-// ===== UPDATE STATS =====
-function updateStats(history) {
-    const total = history.length;
-    const wins = history.filter(e => e.won === true || e.won === 'true').length;
-    const totalCoins = history.reduce((sum, e) => sum + (parseInt(e.coins) || 0), 0);
-    
-    document.getElementById('totalGames').textContent = total;
-    document.getElementById('totalWins').textContent = wins;
-    document.getElementById('totalCoins').textContent = totalCoins;
-    document.getElementById('entryCount').textContent = `(${total} entries)`;
-}
+    // ===== RENDER HISTORY (NO STATS) =====
+    function renderHistory() {
+      const history = getHistory();
+      const list = document.getElementById('historyList');
+      const entryCount = document.getElementById('entryCount');
 
-// ===== RENDER HISTORY =====
-function renderHistory() {
-    const history = getHistory();
-    const list = document.getElementById('historyList');
-    
-    console.log('📊 Rendering history, entries:', history.length);
-    
-    // Update stats
-    updateStats(history);
-    
-    if (history.length === 0) {
+      entryCount.textContent = `(${history.length} entries)`;
+
+      if (history.length === 0) {
         list.innerHTML = `
-            <div class="empty-state">
-                <span class="big-icon">🎯</span>
-                <h5>No History Yet</h5>
-                <p>Play some games to see your history here!</p>
-            </div>
+          <div class="empty-state">
+            <span class="big-icon">🎯</span>
+            <h5>No History Yet</h5>
+            <p>Play some games to see your history here!</p>
+          </div>
         `;
         return;
-    }
-    
-    // Show latest first
-    const reversed = [...history].reverse();
-    
-    list.innerHTML = reversed.map((entry, index) => {
+      }
+
+      // latest first
+      const reversed = [...history].reverse();
+
+      list.innerHTML = reversed.map((entry, index) => {
         const date = new Date(entry.date);
         const isWin = entry.won === true || entry.won === 'true';
         const coins = parseInt(entry.coins) || 0;
         const gameIcon = getGameIcon(entry.game);
-        
-        return `
-            <div class="history-item" style="animation-delay:${index * 30}ms">
-                <div class="icon-box ${isWin ? 'green' : 'red'}">
-                    ${isWin ? '🏆' : '😅'}
-                </div>
-                <div class="details">
-                    <div class="game-name">
-                        <span class="game-icon">${gameIcon}</span>
-                        ${entry.game || 'Unknown Game'}
-                    </div>
-                    <div class="timestamp">
-                        <i class="bi bi-calendar3"></i> 
-                        ${date.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})} 
-                        • ${date.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}
-                    </div>
-                    <span class="result-badge ${isWin ? 'win' : 'loss'}">
-                        ${isWin ? '✅ Won' : '❌ Lost'}
-                    </span>
-                </div>
-                <div class="coin-amount ${coins > 0 ? 'positive' : 'negative'}">
-                    ${coins > 0 ? '+' : ''}${coins} <i class="bi bi-coin"></i>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
 
-// ===== REFRESH HISTORY (Manual) =====
-function refreshHistory() {
-    const btn = document.querySelector('.refresh-btn');
-    btn.innerHTML = '<i class="bi bi-arrow-clockwise spinner-border spinner-border-sm"></i> Loading...';
-    btn.disabled = true;
-    
-    setTimeout(() => {
+        return `
+          <div class="history-item" style="animation-delay:${index * 30}ms">
+            <div class="icon-box ${isWin ? 'green' : 'red'}">
+              ${isWin ? '🏆' : '😅'}
+            </div>
+            <div class="details">
+              <div class="game-name">
+                <span class="game-icon">${gameIcon}</span>
+                ${entry.game || 'Unknown Game'}
+              </div>
+              <div class="timestamp">
+                <i class="bi bi-calendar3"></i> 
+                ${date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} 
+                • ${date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+              </div>
+              <span class="result-badge ${isWin ? 'win' : 'loss'}">
+                ${isWin ? '✅ Won' : '❌ Lost'}
+              </span>
+            </div>
+            <div class="coin-amount ${coins > 0 ? 'positive' : 'negative'}">
+              ${coins > 0 ? '+' : ''}${coins} <i class="bi bi-coin"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===== REFRESH =====
+    function refreshHistory() {
+      const btn = document.querySelector('.refresh-btn');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-arrow-clockwise spinner-border spinner-border-sm"></i> Loading...';
+      btn.disabled = true;
+
+      setTimeout(() => {
         renderHistory();
         updateCoinsDisplay();
-        btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refresh';
+        btn.innerHTML = originalHtml;
         btn.disabled = false;
-    }, 300);
-}
+      }, 300);
+    }
 
-// ===== ADD HISTORY ENTRY (for cross-page compatibility) =====
-function addGameEntry(gameName, coinsEarned, won) {
-    try {
+    // ===== ADD ENTRY (cross‑page) =====
+    function addGameEntry(gameName, coinsEarned, won) {
+      try {
         let history = getHistory();
-        
         const entry = {
-            game: gameName,
-            coins: coinsEarned,
-            won: won,
-            date: new Date().toISOString()
+          game: gameName,
+          coins: coinsEarned,
+          won: won,
+          date: new Date().toISOString()
         };
-        
         history.push(entry);
-        
-        if (history.length > 100) {
-            history = history.slice(-100);
-        }
-        
+        if (history.length > 100) history = history.slice(-100);
         localStorage.setItem('gameHistory', JSON.stringify(history));
         console.log('✅ History entry added:', entry);
-        
         return true;
-    } catch(e) {
+      } catch (e) {
         console.error('❌ Error adding history:', e);
         return false;
+      }
     }
-}
 
-// ===== EXPOSE FUNCTIONS GLOBALLY =====
-window.getHistory = getHistory;
-window.addGameEntry = addGameEntry;
-window.renderHistory = renderHistory;
-window.refreshHistory = refreshHistory;
+    // ===== GLOBALLY EXPOSE =====
+    window.getHistory = getHistory;
+    window.addGameEntry = addGameEntry;
+    window.renderHistory = renderHistory;
+    window.refreshHistory = refreshHistory;
 
-// ===== INIT =====
-updateCoinsDisplay();
-renderHistory();
-
-console.log('📜 History page loaded!');
-console.log('📊 Current history:', getHistory());
-console.log('💡 Click "Refresh" button to update history manually');
+    // ===== INIT =====
+    updateCoinsDisplay();
+    renderHistory();
+    console.log('📜 History page loaded (stats removed)');
+  })();
 </script>
-
 </body>
 </html>
