@@ -79,13 +79,38 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:30px}
 </div>
 
 <script>
-// ===== DATA =====
+// ===== OFFICE FILES DATA =====
 const qs = [
-    {q:'Which file is an image?', icon:'🖼️', opts:['doc.pdf','photo.jpg','video.mp4','music.mp3'], ans:1},
-    {q:'Which file is a text document?', icon:'📝', opts:['image.png','data.csv','notes.txt','pres.pptx'], ans:2},
-    {q:'Which file is a spreadsheet?', icon:'📊', opts:['report.xlsx','photo.jpeg','audio.wav','script.js'], ans:0},
-    {q:'Which file is a video?', icon:'🎬', opts:['song.mp3','movie.mp4','doc.docx','image.gif'], ans:1},
-    {q:'Which file is code?', icon:'💻', opts:['style.css','data.json','app.js','readme.md'], ans:2}
+    {
+        q: 'Which file is a Word document?',
+        icon: '📝',
+        opts: ['report.docx', 'data.xlsx', 'presentation.pptx', 'invoice.pdf'],
+        ans: 0
+    },
+    {
+        q: 'Which file is an Excel spreadsheet?',
+        icon: '📊',
+        opts: ['budget.xlsx', 'letter.doc', 'slides.pptx', 'contract.pdf'],
+        ans: 0
+    },
+    {
+        q: 'Which file is a PDF document?',
+        icon: '📄',
+        opts: ['manual.pdf', 'sheet.xls', 'notes.docx', 'chart.pptx'],
+        ans: 0
+    },
+    {
+        q: 'Which file is a PowerPoint presentation?',
+        icon: '📽️',
+        opts: ['proposal.pptx', 'report.docx', 'data.csv', 'invoice.pdf'],
+        ans: 0
+    },
+    {
+        q: 'Which file is a compressed ZIP archive?',
+        icon: '📦',
+        opts: ['backup.zip', 'document.docx', 'spreadsheet.xlsx', 'image.png'],
+        ans: 0
+    }
 ];
 
 // ===== STATE =====
@@ -110,10 +135,16 @@ function render(){
     scoreD.textContent=`${score}/5`;
     opts.innerHTML='';
     const letters=['A','B','C','D'];
+    const emojis = ['📄','📊','📝','📽️','📦','📑','📈','📉','📋','📁'];
     q.opts.forEach((opt,i)=>{
         const btn=document.createElement('button');
         btn.className='opt-btn';
-        btn.innerHTML=`<span class="letter">${letters[i]}</span><span class="emoji">${['📄','🖼️','🎬','🎵','📊','🔊','💻','📖','🎨','📦'][i]||'📁'}</span><span class="label">${opt}</span>`;
+        const emoji = opt.includes('docx') ? '📝' :
+                     opt.includes('xlsx') ? '📊' :
+                     opt.includes('pdf') ? '📄' :
+                     opt.includes('pptx') ? '📽️' :
+                     opt.includes('zip') ? '📦' : '📁';
+        btn.innerHTML=`<span class="letter">${letters[i]}</span><span class="emoji">${emoji}</span><span class="label">${opt}</span>`;
         btn.onclick=()=>answer(i);
         opts.appendChild(btn);
     });
@@ -135,11 +166,10 @@ function answer(selected){
     if(correct) score++;
     fb.className=`feedback show ${correct?'correct':'wrong'}`;
     fb.querySelector('i').className=`bi ${correct?'bi-check-circle-fill':'bi-x-circle-fill'}`;
-    fbText.textContent=correct?'✅ Correct!':'❌ Wrong!';
+    fbText.textContent=correct?'✅ Correct!':`❌ Wrong! Correct answer: ${q.opts[q.ans]}`;
     answered=true;
     scoreD.textContent=`${score}/5`;
     
-    // Auto next after 2 sec
     setTimeout(()=>{
         if(idx<4){
             idx++;
@@ -160,7 +190,7 @@ function finish(){
     resultTitle.textContent=passed?'Quiz Complete!':'Keep Trying!';
     const reward=passed?10:0;
     rewardBox.innerHTML=`<i class="bi bi-coin"></i> +${reward}`;
-    resultSub.textContent=`You got ${score}/5 correct ${passed?'🎊':''}`;
+    resultSub.textContent=`You got ${score}/5 correct ${passed?'🎊':'Better luck next time!'}`;
     if(passed){
         coins+=10;
         localStorage.setItem('MySalary',coins);
