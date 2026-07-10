@@ -76,16 +76,16 @@
 
 <script>
   const allQuestions = [
-    { q: 'Which file is a Word document?', opts: ['report.docx', 'data.xlsx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is an Excel spreadsheet?', opts: ['budget.xlsx', 'letter.doc', 'slides.pptx', 'contract.pdf'], ans: 0 },
-    { q: 'Which file is a PDF document?', opts: ['manual.pdf', 'sheet.xls', 'notes.docx', 'chart.pptx'], ans: 0 },
-    { q: 'Which file is a PowerPoint presentation?', opts: ['proposal.pptx', 'report.docx', 'data.csv', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is a compressed ZIP archive?', opts: ['backup.zip', 'document.docx', 'spreadsheet.xlsx', 'image.png'], ans: 0 },
-    { q: 'Which file is an image?', opts: ['photo.jpg', 'document.pdf', 'spreadsheet.xlsx', 'presentation.pptx'], ans: 0 },
-    { q: 'Which file is a text document?', opts: ['notes.txt', 'budget.xlsx', 'slides.pptx', 'report.pdf'], ans: 0 },
-    { q: 'Which file is a CSV file?', opts: ['data.csv', 'report.docx', 'presentation.pptx', 'invoice.pdf'], ans: 0 },
-    { q: 'Which file is a JSON file?', opts: ['config.json', 'data.xlsx', 'notes.docx', 'image.png'], ans: 0 },
-    { q: 'Which file is an XML file?', opts: ['settings.xml', 'budget.xlsx', 'presentation.pptx', 'report.pdf'], ans: 0 }
+  { q: 'Which file is a Word document?', opts: ['report.docx', 'presentation.pptx', 'invoice.pdf', 'data.xlsx'], ans: 0 },
+  { q: 'Which file is an Excel spreadsheet?', opts: ['letter.doc', 'budget.xlsx', 'contract.pdf', 'slides.pptx'], ans: 1 },
+  { q: 'Which file is a PDF document?', opts: ['sheet.xls', 'notes.docx', 'manual.pdf', 'chart.pptx'], ans: 2 },
+  { q: 'Which file is a PowerPoint presentation?', opts: ['report.docx', 'invoice.pdf', 'data.csv', 'proposal.pptx'], ans: 3 },
+  { q: 'Which file is a compressed ZIP archive?', opts: ['document.docx', 'backup.zip', 'spreadsheet.xlsx', 'image.png'], ans: 1 },
+  { q: 'Which file is an image?', opts: ['presentation.pptx', 'document.pdf', 'photo.jpg', 'spreadsheet.xlsx'], ans: 2 },
+  { q: 'Which file is a text document?', opts: ['notes.txt', 'slides.pptx', 'report.pdf', 'budget.xlsx'], ans: 0 },
+  { q: 'Which file is a CSV file?', opts: ['invoice.pdf', 'data.csv', 'presentation.pptx', 'report.docx'], ans: 1 },
+  { q: 'Which file is a JSON file?', opts: ['notes.docx', 'image.png', 'data.xlsx', 'config.json'], ans: 3 },
+  { q: 'Which file is an XML file?', opts: ['report.pdf', 'settings.xml', 'budget.xlsx', 'presentation.pptx'], ans: 1 }
   ];
 
   function getRandomQuestions(count) {
