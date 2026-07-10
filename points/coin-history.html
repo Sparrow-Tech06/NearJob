@@ -18,7 +18,7 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 .header-badge{margin-left:auto;background:#6C5CE7;color:#fff;padding:4px 14px;border-radius:40px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
 
 /* History List */
-.history-container{margin:0 16px}
+.history-container{max-width:700px;margin:16px auto;padding:0 14px}
 .history-title{font-size:16px;font-weight:600;color:#1a1a2e;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .history-list{display:flex;flex-direction:column;gap:10px}
 
@@ -32,12 +32,16 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 .history-item .icon-box.orange{background:#fff3e0;color:#FF9800}
 .history-item .icon-box.red{background:#fde8e8;color:#e74c3c}
 
-.history-item .details{flex:1}
+.history-item .details{flex:1;min-width:0}
 .history-item .details .game-name{font-weight:600;color:#1a1a2e;font-size:15px}
+.history-item .details .game-name .game-icon{font-size:18px;margin-right:6px}
 .history-item .details .timestamp{font-size:12px;color:#999;display:flex;align-items:center;gap:4px;margin-top:2px}
 .history-item .details .timestamp i{font-size:11px}
+.history-item .details .result-badge{font-size:11px;padding:2px 10px;border-radius:20px;display:inline-block;margin-top:3px}
+.history-item .details .result-badge.win{background:#e8f5e9;color:#2e7d32}
+.history-item .details .result-badge.loss{background:#fde8e8;color:#c62828}
 
-.history-item .coin-amount{font-weight:700;font-size:18px;display:flex;align-items:center;gap:4px}
+.history-item .coin-amount{font-weight:700;font-size:18px;display:flex;align-items:center;gap:4px;flex-shrink:0}
 .history-item .coin-amount.positive{color:#4CAF50}
 .history-item .coin-amount.negative{color:#e74c3c}
 
@@ -47,7 +51,8 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 .empty-state p{color:#999;font-size:14px}
 
 @media(max-width:480px){
-    .history-item{padding:12px 14px}
+    .history-item{padding:12px 14px;flex-wrap:wrap}
+    .history-item .details{min-width:100%;order:3;margin-top:6px}
 }
 </style>
 </head>
@@ -69,16 +74,153 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 </div>
 
 <script>
-function getHistory(){try{return JSON.parse(localStorage.getItem('gameHistory'))||[]}catch{return[]}}
-function getCoins(){return parseInt(localStorage.getItem('MySalary'))||0}
-function updateCoinsDisplay(){document.getElementById('headerCoins').textContent=getCoins()}
-function addGameEntry(gameName,coinsEarned,won){const h=getHistory();h.push({game:gameName,coins:coinsEarned,won:won,date:new Date().toISOString()});if(h.length>50)h.shift();localStorage.setItem('gameHistory',JSON.stringify(h))}
-function renderHistory(){const h=getHistory(),list=document.getElementById('historyList');if(h.length===0){list.innerHTML=`<div class="empty-state"><span class="big-icon">🎯</span><h5>No History Yet</h5><p>Play some games to see your history here!</p></div>`;return}
-list.innerHTML=h.slice().reverse().map((e,i)=>{const d=new Date(e.date);return`<div class="history-item" style="animation-delay:${i*50}ms"><div class="icon-box ${e.won?'green':'red'}">${e.won?'🏆':'😅'}</div><div class="details"><div class="game-name">${getGameIcon(e.game)} ${e.game}</div><div class="timestamp"><i class="bi bi-calendar3"></i> ${d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} • ${d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="coin-amount ${e.coins>0?'positive':'negative'}">${e.coins>0?'+':''}${e.coins} <i class="bi bi-coin"></i></div></div>`}).join('')}
-function getGameIcon(n){const icons={'Find the File':'📂','Rewards':'🎁','Quiz':'📝','Memory':'🧠','Trivia':'❓'};for(let[k,v]of Object.entries(icons))if(n.includes(k))return v;return'🎮'}
-window.addGameEntry=addGameEntry;updateCoinsDisplay();renderHistory();setInterval(updateCoinsDisplay,2000);
+// ===== GET HISTORY FROM LOCALSTORAGE =====
+function getHistory() {
+    try {
+        const stored = localStorage.getItem('gameHistory');
+        if (!stored) return [];
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch(e) {
+        console.error('Error reading history:', e);
+        return [];
+    }
+}
+
+// ===== GET COINS =====
+function getCoins() {
+    return parseInt(localStorage.getItem('MySalary')) || 0;
+}
+
+// ===== UPDATE COINS DISPLAY =====
+function updateCoinsDisplay() {
+    document.getElementById('headerCoins').textContent = getCoins();
+}
+
+// ===== GET GAME ICON =====
+function getGameIcon(gameName) {
+    const icons = {
+        'Find the File': '📂',
+        'Find File': '📂',
+        'Rewards': '🎁',
+        'Quiz': '📝',
+        'Memory': '🧠',
+        'Trivia': '❓',
+        'Spin': '🎰',
+        'Match': '🔄'
+    };
+    for (let [key, value] of Object.entries(icons)) {
+        if (gameName && gameName.includes(key)) {
+            return value;
+        }
+    }
+    return '🎮';
+}
+
+// ===== RENDER HISTORY =====
+function renderHistory() {
+    const history = getHistory();
+    const list = document.getElementById('historyList');
+    
+    console.log('📊 Rendering history, entries:', history.length);
+    
+    if (history.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <span class="big-icon">🎯</span>
+                <h5>No History Yet</h5>
+                <p>Play some games to see your history here!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Show latest first
+    const reversed = [...history].reverse();
+    
+    list.innerHTML = reversed.map((entry, index) => {
+        const date = new Date(entry.date);
+        const isWin = entry.won === true || entry.won === 'true';
+        const coins = parseInt(entry.coins) || 0;
+        const gameIcon = getGameIcon(entry.game);
+        
+        return `
+            <div class="history-item" style="animation-delay:${index * 50}ms">
+                <div class="icon-box ${isWin ? 'green' : 'red'}">
+                    ${isWin ? '🏆' : '😅'}
+                </div>
+                <div class="details">
+                    <div class="game-name">
+                        <span class="game-icon">${gameIcon}</span>
+                        ${entry.game || 'Unknown Game'}
+                    </div>
+                    <div class="timestamp">
+                        <i class="bi bi-calendar3"></i> 
+                        ${date.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})} 
+                        • ${date.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}
+                    </div>
+                    <span class="result-badge ${isWin ? 'win' : 'loss'}">
+                        ${isWin ? '✅ Won' : '❌ Lost'}
+                    </span>
+                </div>
+                <div class="coin-amount ${coins > 0 ? 'positive' : 'negative'}">
+                    ${coins > 0 ? '+' : ''}${coins} <i class="bi bi-coin"></i>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== ADD HISTORY ENTRY (for cross-page compatibility) =====
+function addGameEntry(gameName, coinsEarned, won) {
+    try {
+        let history = getHistory();
+        
+        const entry = {
+            game: gameName,
+            coins: coinsEarned,
+            won: won,
+            date: new Date().toISOString()
+        };
+        
+        history.push(entry);
+        
+        if (history.length > 100) {
+            history = history.slice(-100);
+        }
+        
+        localStorage.setItem('gameHistory', JSON.stringify(history));
+        console.log('✅ History entry added:', entry);
+        
+        // Re-render if on history page
+        renderHistory();
+        updateCoinsDisplay();
+        
+        return true;
+    } catch(e) {
+        console.error('❌ Error adding history:', e);
+        return false;
+    }
+}
+
+// ===== EXPOSE FUNCTIONS GLOBALLY =====
+window.getHistory = getHistory;
+window.addGameEntry = addGameEntry;
+window.renderHistory = renderHistory;
+
+// ===== INIT =====
+updateCoinsDisplay();
+renderHistory();
+
+// Auto-refresh every 3 seconds
+setInterval(() => {
+    updateCoinsDisplay();
+    renderHistory();
+}, 3000);
+
+console.log('📜 History page loaded!');
+console.log('📊 Current history:', getHistory());
 </script>
 
 </body>
 </html>
-
