@@ -124,7 +124,45 @@ const resultIcon=$('resultIcon'), resultTitle=$('resultTitle'), rewardBox=$('rew
 
 // ===== HELPERS =====
 function updateCoins(){ headerCoins.textContent=coins; }
-function androidNotify(){ if(window.Android && typeof Android.notifyuser==='function') Android.notifyuser(1); }
+
+function androidNotify(){ 
+    if(window.Android && typeof Android.notifyuser==='function') {
+        Android.notifyuser(1); 
+    }
+}
+
+// ===== ADD TO HISTORY =====
+function addToHistory(gameName, coinsEarned, won) {
+    try {
+        // Check if history page function exists
+        if (window.addGameEntry && typeof window.addGameEntry === 'function') {
+            window.addGameEntry(gameName, coinsEarned, won);
+            console.log('✅ History entry added via window.addGameEntry');
+            return;
+        }
+        
+        // Fallback: Direct localStorage
+        let history = [];
+        try {
+            history = JSON.parse(localStorage.getItem('gameHistory')) || [];
+        } catch(e) {}
+        
+        history.push({
+            game: gameName,
+            coins: coinsEarned,
+            won: won,
+            date: new Date().toISOString()
+        });
+        
+        // Keep last 50 entries
+        if (history.length > 50) history.shift();
+        localStorage.setItem('gameHistory', JSON.stringify(history));
+        console.log('✅ History entry added directly:', gameName, coinsEarned, won);
+        
+    } catch(e) {
+        console.error('❌ Error adding history:', e);
+    }
+}
 
 // ===== RENDER =====
 function render(){
@@ -135,7 +173,6 @@ function render(){
     scoreD.textContent=`${score}/5`;
     opts.innerHTML='';
     const letters=['A','B','C','D'];
-    const emojis = ['📄','📊','📝','📽️','📦','📑','📈','📉','📋','📁'];
     q.opts.forEach((opt,i)=>{
         const btn=document.createElement('button');
         btn.className='opt-btn';
@@ -166,7 +203,7 @@ function answer(selected){
     if(correct) score++;
     fb.className=`feedback show ${correct?'correct':'wrong'}`;
     fb.querySelector('i').className=`bi ${correct?'bi-check-circle-fill':'bi-x-circle-fill'}`;
-    fbText.textContent=correct?'✅ Correct!':`❌ Wrong! Correct answer: ${q.opts[q.ans]}`;
+    fbText.textContent=correct?'✅ Correct!':`❌ Wrong! Correct: ${q.opts[q.ans]}`;
     answered=true;
     scoreD.textContent=`${score}/5`;
     
@@ -191,11 +228,21 @@ function finish(){
     const reward=passed?10:0;
     rewardBox.innerHTML=`<i class="bi bi-coin"></i> +${reward}`;
     resultSub.textContent=`You got ${score}/5 correct ${passed?'🎊':'Better luck next time!'}`;
+    
     if(passed){
+        // Add coins
         coins+=10;
-        localStorage.setItem('MySalary',coins);
+        localStorage.setItem('MySalary', coins);
         updateCoins();
+        
+        // 🎯 ADD TO HISTORY - FIXED!
+        addToHistory('Find the File', 10, true);
+        
+        // Android notification
         androidNotify();
+    } else {
+        // 🎯 ADD TO HISTORY - Even if failed
+        addToHistory('Find the File', 0, false);
     }
 }
 
@@ -211,6 +258,10 @@ function resetQuiz(){
 // ===== INIT =====
 updateCoins();
 render();
+
+console.log('📂 Find the File Quiz loaded!');
+console.log('💡 History will be added automatically on finish');
 </script>
 </body>
 </html>
+
