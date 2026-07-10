@@ -16,9 +16,9 @@
 
   --brand: #F08D39 ;
 
-  --backbtnBg: /* #f1f5f9  #F08D39  rgba(255,255,255,0.4) */ #FFE0C2 ;
-  --backbtnclr: #000 ;
-  --backbtnbdr: #F08D39 ;
+  --backbtnBg: #6F5EE8 ;
+  --backbtnclr: #fff ;
+  --backbtnbdr: #6F5EE8 ;
 }
 
 @media (prefers-color-scheme: dark) {
