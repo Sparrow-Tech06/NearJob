@@ -40,7 +40,7 @@
 }
 
 .section-sub-title{
-    background: var(--primary-soft);
+    background: var(--primary-light);
     color:#6b5cff;
     border-radius:20px;
     font-size:13px;
