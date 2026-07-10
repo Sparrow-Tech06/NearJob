@@ -53,13 +53,7 @@
 <script>
 /* Updated menu data with specific links */
 const menuData = [
-    { title: "My Performance", icon: "joystick", link: "../Battle/stats.html", type: "link" },
-    { title: "My Activity History", icon: "clock-history", link: "../coins/wallet.html", type: "link" },
-    { title: "My Rewards", icon: "trophy", link: "../coins/reward.html", type: "link" },
     { title: "Privacy Policy", icon: "lock", link: "privacy.html", type: "link" },
-  /*  { title: "About Us", icon: "info-circle", link: "../coins/arcade.html", type: "link" },
-    { title: "Share Our App", icon: "share", link: "https://wa.me/?text=https://play.google.com/store/apps/details?id=com.kyra.qmath", type: "share" },
-    { title: "Rate Us", icon: "star-fill", link: "https://play.google.com/store/apps/details?id=com.kyra.qmath", type: "rate" }, */
     { title: "Contact Us", icon: "envelope", link: "mailto:team.kyraapps@outlook.com?subject=App Support Request", type: "mailto" }
 ];
 
@@ -90,25 +84,6 @@ menuData.forEach((item, i) => {
     }
 });
 
-/* Premium scroll animation logic */
-const profileHeader = document.getElementById("profileHeader");
-const profileImg = document.getElementById("profileImg");
-const topbar = document.getElementById("topbar");
-
-window.addEventListener("scroll", () => {
-    const rect = profileHeader.getBoundingClientRect();
-    let progress = Math.min(Math.max(-rect.top / 120, 0), 1);
-
-    /* profile image shrink */
-    profileImg.style.transform = `scale(${1 - progress * 0.2})`;
-
-    /* sticky header show/hide */
-    if (progress > 0.20) {
-        topbar.classList.add("show", "active");
-    } else {
-        topbar.classList.remove("show", "active");
-    }
-});
 </script>
 
 </body>
