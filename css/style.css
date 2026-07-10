@@ -9,7 +9,7 @@
 .hero{
     margin:0 16px;
     background: var(--primary) ;
-    border-radius:18px;
+    border-radius: var(--radius) ;
     padding:20px;
     color:#fff;
     max-width:660px;
@@ -54,7 +54,7 @@
 
 .task-card{
     display:block;
-    background:linear-gradient(180deg,#7158ff,#6d55eb);
+    background: var(--primary);
     border-radius:18px;
     padding:18px;
     color:#fff;
@@ -108,7 +108,7 @@
     bottom:0;
     width:100%;
     background:#fff;
-    border-top:1px solid #eee;
+    border-top:1px solid var(--border);
     height:70px;
     display:flex;
     justify-content:space-around;
@@ -116,7 +116,7 @@
 }
 
 .bottom-nav a{
-    color:#9d9d9d;
+    color: var(--primary);
     text-decoration:none;
     display:flex;
     flex-direction:column;
