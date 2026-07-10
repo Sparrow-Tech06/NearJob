@@ -17,9 +17,13 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 .page-title{font-size:22px;font-weight:700;color:#1a1a2e}
 .header-badge{margin-left:auto;background:#6C5CE7;color:#fff;padding:4px 14px;border-radius:40px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
 
-/* History List */
+/* History Container */
 .history-container{max-width:700px;margin:16px auto;padding:0 14px}
-.history-title{font-size:16px;font-weight:600;color:#1a1a2e;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.history-title{font-size:16px;font-weight:600;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+.refresh-btn{background:#6C5CE7;color:#fff;border:none;border-radius:40px;padding:6px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:.3s}
+.refresh-btn:hover{background:#5a4bd1;transform:scale(1.02)}
+
 .history-list{display:flex;flex-direction:column;gap:10px}
 
 .history-item{background:#fff;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;border:1px solid #edeef3;transition:.2s;animation:slideIn .3s ease}
@@ -28,8 +32,6 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 
 .history-item .icon-box{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .history-item .icon-box.green{background:#e8f5e9;color:#4CAF50}
-.history-item .icon-box.purple{background:#f0edff;color:#6C5CE7}
-.history-item .icon-box.orange{background:#fff3e0;color:#FF9800}
 .history-item .icon-box.red{background:#fde8e8;color:#e74c3c}
 
 .history-item .details{flex:1;min-width:0}
@@ -50,9 +52,16 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 .empty-state h5{color:#1a1a2e;font-weight:600}
 .empty-state p{color:#999;font-size:14px}
 
+/* Total Stats */
+.stats-bar{background:#fff;border-radius:16px;padding:12px 18px;margin-bottom:16px;display:flex;justify-content:space-around;border:1px solid #edeef3}
+.stat-item{text-align:center}
+.stat-item .stat-value{font-size:20px;font-weight:700;color:#1a1a2e}
+.stat-item .stat-label{font-size:11px;color:#999;font-weight:500}
+
 @media(max-width:480px){
     .history-item{padding:12px 14px;flex-wrap:wrap}
     .history-item .details{min-width:100%;order:3;margin-top:6px}
+    .stats-bar{flex-wrap:wrap;gap:8px}
 }
 </style>
 </head>
@@ -67,9 +76,32 @@ body{background:#f0f2f8;font-family:'Segoe UI',sans-serif;padding-bottom:40px}
 
 <!-- History -->
 <div class="history-container">
-    <div class="history-title">
-        <i class="bi bi-clock-history" style="color:#6C5CE7"></i> Game History
+    <div class="history-header">
+        <div class="history-title">
+            <i class="bi bi-clock-history" style="color:#6C5CE7"></i> Game History
+            <span style="font-size:12px;color:#999;font-weight:400;" id="entryCount">(0 entries)</span>
+        </div>
+        <button class="refresh-btn" onclick="refreshHistory()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
     </div>
+    
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-item">
+            <div class="stat-value" id="totalGames">0</div>
+            <div class="stat-label">Total Games</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalWins" style="color:#4CAF50">0</div>
+            <div class="stat-label">Wins 🏆</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalCoins" style="color:#6C5CE7">0</div>
+            <div class="stat-label">Total Coins 🪙</div>
+        </div>
+    </div>
+    
     <div class="history-list" id="historyList"></div>
 </div>
 
@@ -117,12 +149,27 @@ function getGameIcon(gameName) {
     return '🎮';
 }
 
+// ===== UPDATE STATS =====
+function updateStats(history) {
+    const total = history.length;
+    const wins = history.filter(e => e.won === true || e.won === 'true').length;
+    const totalCoins = history.reduce((sum, e) => sum + (parseInt(e.coins) || 0), 0);
+    
+    document.getElementById('totalGames').textContent = total;
+    document.getElementById('totalWins').textContent = wins;
+    document.getElementById('totalCoins').textContent = totalCoins;
+    document.getElementById('entryCount').textContent = `(${total} entries)`;
+}
+
 // ===== RENDER HISTORY =====
 function renderHistory() {
     const history = getHistory();
     const list = document.getElementById('historyList');
     
     console.log('📊 Rendering history, entries:', history.length);
+    
+    // Update stats
+    updateStats(history);
     
     if (history.length === 0) {
         list.innerHTML = `
@@ -145,7 +192,7 @@ function renderHistory() {
         const gameIcon = getGameIcon(entry.game);
         
         return `
-            <div class="history-item" style="animation-delay:${index * 50}ms">
+            <div class="history-item" style="animation-delay:${index * 30}ms">
                 <div class="icon-box ${isWin ? 'green' : 'red'}">
                     ${isWin ? '🏆' : '😅'}
                 </div>
@@ -171,6 +218,20 @@ function renderHistory() {
     }).join('');
 }
 
+// ===== REFRESH HISTORY (Manual) =====
+function refreshHistory() {
+    const btn = document.querySelector('.refresh-btn');
+    btn.innerHTML = '<i class="bi bi-arrow-clockwise spinner-border spinner-border-sm"></i> Loading...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        renderHistory();
+        updateCoinsDisplay();
+        btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refresh';
+        btn.disabled = false;
+    }, 300);
+}
+
 // ===== ADD HISTORY ENTRY (for cross-page compatibility) =====
 function addGameEntry(gameName, coinsEarned, won) {
     try {
@@ -192,10 +253,6 @@ function addGameEntry(gameName, coinsEarned, won) {
         localStorage.setItem('gameHistory', JSON.stringify(history));
         console.log('✅ History entry added:', entry);
         
-        // Re-render if on history page
-        renderHistory();
-        updateCoinsDisplay();
-        
         return true;
     } catch(e) {
         console.error('❌ Error adding history:', e);
@@ -207,19 +264,15 @@ function addGameEntry(gameName, coinsEarned, won) {
 window.getHistory = getHistory;
 window.addGameEntry = addGameEntry;
 window.renderHistory = renderHistory;
+window.refreshHistory = refreshHistory;
 
 // ===== INIT =====
 updateCoinsDisplay();
 renderHistory();
 
-// Auto-refresh every 3 seconds
-setInterval(() => {
-    updateCoinsDisplay();
-    renderHistory();
-}, 3000);
-
 console.log('📜 History page loaded!');
 console.log('📊 Current history:', getHistory());
+console.log('💡 Click "Refresh" button to update history manually');
 </script>
 
 </body>
