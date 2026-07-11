@@ -21,7 +21,7 @@ main { max-width: 660px;  margin:0 auto;  }
 .reward-card{
     background: var(--header);
     border-radius: var(--radius);
-    overflow:hidden;
+    overflow:hidden; aspect-ratio: 2 / 2 ;
     transition:.3s;
 }
 
@@ -43,7 +43,7 @@ main { max-width: 660px;  margin:0 auto;  }
 }
 
 .reward-emoji{
-    font-size: 35px;
+    font-size: 55px;
     transition:.3s;
 }
 
