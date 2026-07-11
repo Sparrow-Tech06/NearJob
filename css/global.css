@@ -90,6 +90,22 @@ header {
      background: var(--primary-light) ;
 }
 
+.header-badge{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#fff7df;
+    color:#d68910;
+    padding:6px 12px;
+    border-radius:50px;
+    font-weight:700;
+    border:1px solid #f5d76e;
+}
+
+.header-badge i{
+    font-size:16px;
+}
+
 /******************************************/
 button, a {
   touch-action: manipulation;
