@@ -61,7 +61,7 @@ main { max-width: 660px;  margin:0 auto;  }
 .lock-icon{
     position:absolute;
     color:#fff;
-    font-size:38px;
+    font-size: 22px;
 }
 
 .reward-bottom{
