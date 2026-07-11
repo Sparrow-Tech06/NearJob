@@ -5,7 +5,7 @@
       padding: 0 16px;
     }
     .count-card {
-      background: #ffffff;
+      background: var(--header);
       border-radius: 32px;
       padding: 28px 24px 30px;
       border: 1px solid var(--border);
