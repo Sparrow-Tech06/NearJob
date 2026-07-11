@@ -27,7 +27,7 @@ main { max-width: 660px;  margin:0 auto;  }
 }
 
 .reward-card.unlocked{
-    border:3px solid #4CAF50;
+    border: 1.5px solid #4CAF50;
 }
 
 .reward-card.locked{
@@ -35,7 +35,7 @@ main { max-width: 660px;  margin:0 auto;  }
 }
 
 .reward-top{
-    height:170px;
+    height: auto;
     background:#ECECF8;
     display:flex;
     align-items:center;
@@ -44,7 +44,7 @@ main { max-width: 660px;  margin:0 auto;  }
 }
 
 .reward-emoji{
-    font-size:78px;
+    font-size: 35px;
     transition:.3s;
 }
 
@@ -56,17 +56,17 @@ main { max-width: 660px;  margin:0 auto;  }
 .lock-icon{
     position:absolute;
     color:#fff;
-    font-size: 22px;
+    font-size: 18px;
 }
 
 .reward-bottom{
-    height:50px;
+    height: auto;
     background:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
     gap:4px;
-    font-size:22px;
+    font-size:18px;
     font-weight:600;
     color:#777;
 }
