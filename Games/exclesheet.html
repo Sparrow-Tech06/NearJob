@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Excel Math Quiz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    body{background:#f2f4f8;font-family:'Segoe UI',Roboto,system-ui,sans-serif}
+    .header{background:#1a1a2e;color:white;border-bottom:2px solid #6C5CE7}
+    .back-btn{background:transparent;border:none;color:white;font-size:24px;padding:0 8px}
+    .header-badge{background:rgba(255,255,255,0.1);padding:6px 16px;border-radius:40px;font-size:14px;display:flex;align-items:center;gap:6px}
+    .quiz-container{max-width:820px;margin:20px auto;padding:0 14px}
+    .sheet-card{background:#fff;border-radius:28px;padding:24px 20px 28px;box-shadow:0 8px 32px rgba(0,0,0,.06);border:1px solid #e2e6ee;transition:.2s}
+    .sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+    .sheet-title{font-size:20px;font-weight:700;color:#0f0f1e;display:flex;align-items:center;gap:10px}
+    .sheet-title i{color:#217346;font-size:28px}
+    .status-badge{background:#eef2f7;padding:4px 18px;border-radius:40px;font-size:13px;font-weight:600;color:#2d3a4a}
+    .excel-grid{border:2px solid #d0d7e2;border-radius:18px;overflow:hidden;background:#fafbfc}
+    .grid-row{display:grid;grid-template-columns:50px 1fr 120px;border-bottom:1px solid #e6eaef}
+    .grid-row:last-child{border-bottom:none}
+    .grid-row.header-row{background:#e9edf4;font-weight:600;color:#1f2a3a;border-bottom:2px solid #cbd2dd}
+    .grid-cell{padding:12px 14px;display:flex;align-items:center;word-break:break-word}
+    .grid-cell:not(:last-child){border-right:1px solid #e6eaef}
+    .cell-index{font-weight:600;color:#4a5a72;justify-content:center;background:#f2f5fa}
+    .cell-question{font-weight:500;color:#1e293b}
+    .cell-answer input{width:100%;border:2px solid #d8dfe9;border-radius:12px;padding:8px 12px;font-weight:500;background:white;transition:.2s;font-size:15px;min-width:70px}
+    .cell-answer input:focus{border-color:#6C5CE7;outline:none;box-shadow:0 0 0 3px rgba(108,92,231,.2)}
+    .cell-answer input.correct{border-color:#2e7d32;background:#f0f9f0}
+    .cell-answer input.wrong{border-color:#c62828;background:#fff0f0}
+    .cell-answer input:disabled{background:#f4f6fa;opacity:.8}
+    .action-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:24px;gap:12px}
+    .score-summary{background:#f0f3f9;padding:8px 20px;border-radius:40px;font-weight:600;color:#1e2a3a;font-size:15px}
+    .score-summary i{color:#f5b342;margin-right:6px}
+    .btn-submit{background:#217346;border:none;padding:12px 38px;border-radius:60px;font-weight:700;color:white;display:flex;align-items:center;gap:10px;transition:.25s;box-shadow:0 4px 12px rgba(33,115,70,.25)}
+    .btn-submit:hover{background:#1a5c3a;transform:scale(1.02)}
+    .btn-submit:disabled{opacity:.5;transform:none;box-shadow:none}
+    .btn-reset{background:transparent;border:2px solid #6C5CE7;padding:10px 28px;border-radius:60px;font-weight:600;color:#6C5CE7;transition:.2s}
+    .btn-reset:hover{background:#6C5CE7;color:#fff}
+    .completion-card{background:#fff;border-radius:28px;padding:32px 20px;text-align:center;border:2px solid #4CAF50;display:none;margin-top:10px}
+    .completion-card.show{display:block;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+    .completion-card .big-icon{font-size:64px}
+    .completion-card .reward-box{background:#e8f5e9;color:#2e7d32;padding:10px 32px;border-radius:60px;font-size:26px;font-weight:700;display:inline-block;margin:10px 0}
+    @media(max-width:550px){.grid-row{grid-template-columns:40px 1fr 100px}.grid-cell{padding:10px 10px}.cell-answer input{min-width:60px;padding:6px 8px}.sheet-title{font-size:17px}}
+  </style>
+</head>
+<body>
+
+<header class="header d-flex justify-content-between align-items-center px-3 py-2">
+  <button class="back-btn" onclick="history.back()"><i class="bi bi-arrow-left"></i></button>
+  <nav class="d-flex align-items-center gap-2">
+    <div class="header-badge"><i class="bi bi-coin"></i> <span id="headerCoins">0</span></div>
+  </nav>
+</header>
+
+<div class="quiz-container" id="quizApp">
+  <!-- Excel Sheet Card -->
+  <div class="sheet-card" id="sheetCard">
+    <div class="sheet-header">
+      <div class="sheet-title"><i class="bi bi-file-spreadsheet-fill"></i> MathSheet</div>
+      <div class="status-badge" id="statusBadge"><i class="bi bi-grid"></i> 5 questions</div>
+    </div>
+
+    <div class="excel-grid" id="excelGrid">
+      <!-- header row -->
+      <div class="grid-row header-row">
+        <div class="grid-cell cell-index">#</div>
+        <div class="grid-cell cell-question">Question</div>
+        <div class="grid-cell cell-answer">Your Answer</div>
+      </div>
+      <!-- rows generated by JS -->
+    </div>
+
+    <div class="action-bar">
+      <div class="score-summary"><i class="bi bi-check-circle-fill" style="color:#2e7d32;"></i> <span id="scoreDisplay">0/5</span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-reset" id="resetBtn" onclick="resetQuiz()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+        <button class="btn-submit" id="submitBtn" onclick="submitQuiz()"><i class="bi bi-check2-circle"></i> Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion / reward card -->
+  <div class="completion-card" id="completionCard">
+    <div class="big-icon" id="resultIcon">🎉</div>
+    <h3 id="resultTitle">Perfect!</h3>
+    <div class="reward-box" id="rewardBox"><i class="bi bi-coin"></i> +0</div>
+    <p id="resultSub">You got 5/5 correct</p>
+    <button class="btn-reset" onclick="resetQuiz()" style="margin-top:8px;"><i class="bi bi-arrow-counterclockwise"></i> Try Again</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- MATH QUESTIONS (Excel style) -----
+    const QUESTION_BANK = [
+      { q: '12 × 15 = ?', ans: 180 },
+      { q: '256 ÷ 8 = ?', ans: 32 },
+      { q: '144 + 237 = ?', ans: 381 },
+      { q: '500 − 126 = ?', ans: 374 },
+      { q: '7 × 9 + 14 = ?', ans: 77 },
+      { q: '81 ÷ 9 × 6 = ?', ans: 54 },
+      { q: '999 − 456 = ?', ans: 543 },
+      { q: '34 × 6 = ?', ans: 204 },
+      { q: '1200 ÷ 25 = ?', ans: 48 },
+      { q: '365 + 478 = ?', ans: 843 },
+      { q: '75 × 8 = ?', ans: 600 },
+      { q: '1440 ÷ 12 = ?', ans: 120 },
+      { q: '28 × 14 = ?', ans: 392 },
+      { q: '1000 − 789 = ?', ans: 211 },
+      { q: '56 + 89 = ?', ans: 145 }
+    ];
+
+    function pickRandomQuestions(count = 5) {
+      const shuffled = [...QUESTION_BANK];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled.slice(0, count);
+    }
+
+    // ----- STATE -----
+    let currentQuestions = pickRandomQuestions(5);      // array of {q, ans}
+    let userAnswers = currentQuestions.map(() => '');   // string values
+    let answerStatus = currentQuestions.map(() => null); // 'correct' | 'wrong' | null
+    let isSubmitted = false;
+    let coins = parseInt(localStorage.getItem('MySalary')) || 0;
+
+    // DOM refs
+    const grid = document.getElementById('excelGrid');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const headerCoins = document.getElementById('headerCoins');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const sheetCard = document.getElementById('sheetCard');
+    const completionCard = document.getElementById('completionCard');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultTitle = document.getElementById('resultTitle');
+    const rewardBox = document.getElementById('rewardBox');
+    const resultSub = document.getElementById('resultSub');
+    const statusBadge = document.getElementById('statusBadge');
+
+    // helper: update coin display
+    function updateCoins() {
+      headerCoins.textContent = coins;
+    }
+
+    // helper: android notify (if bridge exists)
+    function androidNotify() {
+      if (window.Android && typeof Android.notifyuser === 'function') {
+        Android.notifyuser(1);
+      }
+    }
+
+    // add to history (only when reward earned)
+    function addToHistory(gameName, coinsEarned) {
+      try {
+        let history = [];
+        const stored = localStorage.getItem('gameHistory');
+        if (stored) {
+          try { history = JSON.parse(stored); if (!Array.isArray(history)) history = []; } catch(e) { history = []; }
+        }
+        history.push({ game: gameName, coins: coinsEarned, date: new Date().toISOString() });
+        if (history.length > 100) history = history.slice(-100);
+        localStorage.setItem('gameHistory', JSON.stringify(history));
+      } catch(e) {}
+    }
+
+    // ----- RENDER GRID -----
+    function renderGrid() {
+      // keep header, remove all rows after header
+      while (grid.children.length > 1) {
+        grid.removeChild(grid.lastChild);
+      }
+
+      currentQuestions.forEach((q, idx) => {
+        const row = document.createElement('div');
+        row.className = 'grid-row';
+        row.dataset.index = idx;
+
+        // index cell
+        const idxCell = document.createElement('div');
+        idxCell.className = 'grid-cell cell-index';
+        idxCell.textContent = idx + 1;
+
+        // question cell
+        const qCell = document.createElement('div');
+        qCell.className = 'grid-cell cell-question';
+        qCell.textContent = q.q;
+
+        // answer cell
+        const ansCell = document.createElement('div');
+        ansCell.className = 'grid-cell cell-answer';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.placeholder = '?';
+        input.value = userAnswers[idx] || '';
+        input.id = `ans_${idx}`;
+        input.autocomplete = 'off';
+
+        // if submitted, disable & apply style
+        if (isSubmitted) {
+          input.disabled = true;
+          const status = answerStatus[idx];
+          if (status === 'correct') input.classList.add('correct');
+          else if (status === 'wrong') input.classList.add('wrong');
+        } else {
+          input.disabled = false;
+        }
+
+        // event: store value on change
+        input.addEventListener('input', function(e) {
+          if (isSubmitted) return;
+          userAnswers[idx] = this.value;
+          // remove status classes while editing
+          this.classList.remove('correct', 'wrong');
+          // update score live (but only count filled correct? we count only on submit)
+          updateScoreDisplay();
+        });
+
+        ansCell.appendChild(input);
+        row.appendChild(idxCell);
+        row.appendChild(qCell);
+        row.appendChild(ansCell);
+        grid.appendChild(row);
+      });
+
+      // update status badge
+      const total = currentQuestions.length;
+      statusBadge.innerHTML = `<i class="bi bi-grid"></i> ${total} questions`;
+      updateScoreDisplay();
+    }
+
+    // update score display based on answered count (not correctness)
+    function updateScoreDisplay() {
+      const filled = userAnswers.filter(v => v !== '' && v !== null && v !== undefined).length;
+      const total = currentQuestions.length;
+      scoreDisplay.textContent = `${filled}/${total}`;
+    }
+
+    // ----- SUBMIT -----
+    function submitQuiz() {
+      if (isSubmitted) return;
+
+      // check if all fields are filled
+      const allFilled = userAnswers.every(v => v !== '' && v !== null && v !== undefined && v.trim() !== '');
+      if (!allFilled) {
+        alert('Please answer all questions before submitting.');
+        return;
+      }
+
+      // evaluate
+      let correctCount = 0;
+      const inputs = document.querySelectorAll('.grid-row input[type="number"]');
+      inputs.forEach((input, idx) => {
+        const userVal = parseFloat(userAnswers[idx]);
+        const correctVal = currentQuestions[idx].ans;
+        const isCorrect = (userVal === correctVal);
+        if (isCorrect) {
+          correctCount++;
+          answerStatus[idx] = 'correct';
+          input.classList.add('correct');
+        } else {
+          answerStatus[idx] = 'wrong';
+          input.classList.add('wrong');
+        }
+        input.disabled = true;
+      });
+
+      isSubmitted = true;
+      submitBtn.disabled = true;
+
+      // show final score
+      const total = currentQuestions.length;
+      scoreDisplay.textContent = `${correctCount}/${total}`;
+
+      // check if all correct => reward
+      const allCorrect = (correctCount === total);
+      if (allCorrect) {
+        // reward 10 coins
+        coins += 10;
+        localStorage.setItem('MySalary', coins);
+        updateCoins();
+        addToHistory('Excel Math Quiz', 10);
+        androidNotify();
+
+        // show completion card (hide sheet card)
+        sheetCard.style.display = 'none';
+        completionCard.classList.add('show');
+        resultIcon.textContent = '🏆';
+        resultTitle.textContent = 'Brilliant!';
+        rewardBox.innerHTML = `<i class="bi bi-coin"></i> +10`;
+        resultSub.textContent = `You solved all ${total} questions correctly! 🎊`;
+      } else {
+        // partial correct: show feedback but keep sheet visible
+        // flash feedback
+        const badge = document.getElementById('statusBadge');
+        badge.innerHTML = `<i class="bi bi-exclamation-triangle-fill" style="color:#b85c00;"></i> ${correctCount}/${total} correct`;
+        // mark wrong inputs red, keep correct green
+        // already done
+        // enable reset, but submit stays disabled
+        resetBtn.focus();
+        // we also update the result message in sheet card (optional)
+        // we can show a temporary message
+        const existingMsg = document.querySelector('.sheet-msg');
+        if (!existingMsg) {
+          const msg = document.createElement('div');
+          msg.className = 'sheet-msg alert alert-warning mt-3';
+          msg.role = 'alert';
+          msg.innerHTML = `<i class="bi bi-info-circle"></i> You got ${correctCount}/${total} correct. Try again!`;
+          sheetCard.appendChild(msg);
+        } else {
+          const msg = document.querySelector('.sheet-msg');
+          msg.innerHTML = `<i class="bi bi-info-circle"></i> You got ${correctCount}/${total} correct. Try again!`;
+        }
+        // also highlight submit button disabled
+      }
+    }
+
+    // ----- RESET -----
+    function resetQuiz() {
+      // reset state
+      currentQuestions = pickRandomQuestions(5);
+      userAnswers = currentQuestions.map(() => '');
+      answerStatus = currentQuestions.map(() => null);
+      isSubmitted = false;
+      submitBtn.disabled = false;
+
+      // remove any extra message
+      const msg = document.querySelector('.sheet-msg');
+      if (msg) msg.remove();
+
+      // show sheet, hide completion
+      sheetCard.style.display = 'block';
+      completionCard.classList.remove('show');
+
+      // re-render grid
+      renderGrid();
+
+      // update status badge
+      statusBadge.innerHTML = `<i class="bi bi-grid"></i> ${currentQuestions.length} questions`;
+
+      // reset score display
+      updateScoreDisplay();
+
+      // focus first input
+      const firstInput = document.querySelector('.grid-row input');
+      if (firstInput) firstInput.focus();
+    }
+
+    // ----- INIT -----
+    function init() {
+      updateCoins();
+      renderGrid();
+      // if there is any completion shown, hide it
+      completionCard.classList.remove('show');
+      sheetCard.style.display = 'block';
+      // remove any message
+      const msg = document.querySelector('.sheet-msg');
+      if (msg) msg.remove();
+      // set initial score
+      updateScoreDisplay();
+    }
+
+    // Expose reset globally for inline onclick
+    window.resetQuiz = resetQuiz;
+    window.submitQuiz = submitQuiz;
+
+    // start
+    init();
+  })();
+</script>
+</body>
+</html>
