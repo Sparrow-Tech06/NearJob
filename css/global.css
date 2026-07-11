@@ -87,7 +87,7 @@ header {
 .back-btn:active{ transform:scale(.96); }
 
 .icon-circle {
-  
+     background: var(--primary-light) ;
 }
 
 /******************************************/
