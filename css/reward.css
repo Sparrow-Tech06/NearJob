@@ -24,8 +24,8 @@ main { max-width: 660px;  margin:0 auto; }
 /****************** Reward Card ******************/
 
 .reward-card{
-    background:#fff;
-    border-radius:22px;
+    background: var(--header);
+    border-radius: var(--radius);
     overflow:hidden;
     transition:.3s;
     box-shadow:0 2px 8px rgba(0,0,0,.05);
