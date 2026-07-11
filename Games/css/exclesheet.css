@@ -1,7 +1,7 @@
 
     .quiz-container{max-width:660px;margin:20px auto;padding:0 14px}
 
-    .sheet-card{background: var(--header);border-radius:28px;padding:24px 20px 28px;box-shadow:0 8px 32px rgba(0,0,0,.06);border:1px solid var(--border);transition:.2s}
+    .sheet-card{background: var(--header);border-radius:28px;padding:24px 20px 28px;border:1px solid var(--border);transition:.2s}
 
     .sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap}
     .sheet-title{font-size:20px;font-weight:700;color:#0f0f1e;display:flex;align-items:center;gap:10px}
