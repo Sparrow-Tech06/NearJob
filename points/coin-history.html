@@ -11,22 +11,48 @@
 <link rel="stylesheet" href="../css/global.css?v10.07.26">
 
 <style>
-    
+body{
+    background:#f5f6fa;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
 .container-box{
     max-width:700px;
     margin:18px auto;
     padding:0 14px;
 }
 
+.page-title{
+    font-size:20px;
+    font-weight:700;
+}
+
+.header-badge{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#fff7df;
+    color:#d68910;
+    border:1px solid #f5d76e;
+    padding:6px 12px;
+    border-radius:50px;
+    font-weight:700;
+}
+
 .history-card{
     background:#fff;
+    border:1px solid #ececec;
     border-radius:18px;
-    border:1px solid #e8e8e8;
-    padding:16px;
-    margin-bottom:10px;
+    padding:15px 18px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    margin-bottom:10px;
+}
+
+.left{
+    display:flex;
+    flex-direction:column;
 }
 
 .game-name{
@@ -35,24 +61,25 @@
     color:#222;
 }
 
+.history-date{
+    font-size:12px;
+    color:#8a8a8a;
+    margin-top:3px;
+}
+
 .coin{
     color:#28a745;
-    font-weight:700;
     font-size:16px;
+    font-weight:700;
 }
 
 .empty-box{
     background:#fff;
+    border:1px solid #ececec;
     border-radius:18px;
-    border:1px solid #e8e8e8;
-    padding:40px 20px;
+    padding:50px 20px;
     text-align:center;
-    color:#777;
-}
-
-.page-title{
-    font-size:20px;
-    font-weight:700;
+    color:#888;
 }
 </style>
 
@@ -61,21 +88,20 @@
 
 <header class="header d-flex justify-content-between align-items-center px-3 py-2">
 
-    <div>
-       <!-- Back -->
-       <button class="back-btn" onclick="history.back()"> <i class="bi bi-arrow-left"></i></button>
-       <!-- Title -->
-       <div class="page-title fw-bold"> Coin History </div>
-  </div>
-    
-    <!-- Total Coins -->
+    <button class="back-btn" onclick="history.back()">
+        <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <div class="page-title">
+        Coin History
+    </div>
+
     <div class="header-badge">
         <i class="bi bi-coin"></i>
         <span id="totalCoins">0</span>
     </div>
 
 </header>
-
 
 <div class="container-box">
 
@@ -85,15 +111,10 @@
 
 <script>
 
-function loadTotalCoins() {
-    const total = parseInt(localStorage.getItem("MySalary")) || 0;
-    document.getElementById("totalCoins").textContent = total;
+function loadTotalCoins(){
+    const total=parseInt(localStorage.getItem("MySalary")) || 0;
+    document.getElementById("totalCoins").textContent=total;
 }
-
-loadTotalCoins();
-
-
-const historyList=document.getElementById("historyList");
 
 function loadHistory(){
 
@@ -105,11 +126,13 @@ function loadHistory(){
         history=[];
     }
 
-    // Sirf winning entries
+    // Sirf winning history
     history=history.filter(item=>item.coins>0);
 
     // Latest first
     history.reverse();
+
+    const historyList=document.getElementById("historyList");
 
     if(history.length===0){
         historyList.innerHTML=`
@@ -124,10 +147,24 @@ function loadHistory(){
 
     history.forEach(item=>{
 
+        const date=new Date(item.date).toLocaleDateString("en-GB",{
+            day:"2-digit",
+            month:"short",
+            year:"numeric"
+        });
+
         historyList.innerHTML+=`
             <div class="history-card">
-                <div class="game-name">${item.game}</div>
-                <div class="coin">+${item.coins} Coins</div>
+
+                <div class="left">
+                    <div class="game-name">${item.game}</div>
+                    <div class="history-date">${date}</div>
+                </div>
+
+                <div class="coin">
+                    +${item.coins} Coins
+                </div>
+
             </div>
         `;
 
@@ -135,6 +172,7 @@ function loadHistory(){
 
 }
 
+loadTotalCoins();
 loadHistory();
 
 </script>
