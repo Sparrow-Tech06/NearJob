@@ -6,12 +6,11 @@
 .container { max-width:660px; }
 
 .hero{
-    margin:0 16px;
     background: var(--primary) ;
     border-radius: var(--radius) ;
     padding:20px;
     color:#fff; margin: 20px auto;
-    max-width:660px;
+    max-width:660px; width:90%;
 }
 
 .hero h6{
